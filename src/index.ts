@@ -6,8 +6,10 @@ dotenv.config()
 
 // Import routers
 import { UserRouter } from './routes/user.route'
+import { AssociationRouter } from './routes/association.route'
+import { Association } from './entity/association.entity'
 
-const app: Server = new Server([new UserRouter()])
+const app: Server = new Server([new UserRouter(), new AssociationRouter()])
 
 AppDataSource.initialize()
   .then(async () => {
@@ -21,6 +23,14 @@ AppDataSource.initialize()
     user.age = 25
     await AppDataSource.manager.save(user)
     console.log('Saved a new user with id: ' + user.id)
+
+    const asso = new Association()
+    asso.rna = 'super le rna'
+    asso.name = 'Sauvez Nathan'
+    asso.description = 'Direction Bali'
+    asso.createdAt = new Date()
+    asso.updatedAt = asso.createdAt
+    await AppDataSource.manager.save(asso)
 
     console.log('Loading users from the database...')
     const users = await AppDataSource.manager.find(User)
