@@ -1,11 +1,10 @@
-import { Repository } from 'typeorm'
-import { User } from '../entity/User'
-import { AppDataSource } from '../data-source'
 import * as cache from 'memory-cache'
 import { log } from '../helpers/logger.helper'
+import { db } from '../helpers/db.helper'
+import { User } from '../entities/user.entity'
 
 export class UserService {
-  static userRepo: Repository<User> = AppDataSource.getRepository(User)
+  private static userRepo = db.users
 
   static async getUsers() {
     const data = cache.get('data')
@@ -14,10 +13,24 @@ export class UserService {
       return data
     } else {
       log.info('Serving from db')
-      const users = await this.userRepo.find()
+      const users = await this.userRepo.findMany()
 
       cache.put('data', users, 6000)
       return users
     }
+  }
+
+  static async createUser(user: User) {
+    const result = await this.userRepo.create({
+      data: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        password: user.password,
+        region: { connect: { id: user.regionId } },
+        userRole: { connect: { id: user.userRoleId } }
+      }
+    })
+    return result.id
   }
 }

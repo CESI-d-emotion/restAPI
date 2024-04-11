@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  firstName String @db.VarChar(50)
+  lastName String @db.VarChar(50)
+  email String @unique
+  password String
+  region region @relation(fields: [regionId], references: [id])
+  regionId Int
+  userRole userRole @relation(fields: [userRoleId], references: [id])
+  userRoleId Int
+
+  membreAsso membreAsso[]
+  vuesPost vuesPost[]
+  postReaction postReaction[]
+}
+
+model userRole {
+  id Int @id @default(autoincrement())
+  libelle String @db.VarChar(50)
+
+  users users[]
+}
+
+model region {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(50)
+  nutsCode String @db.VarChar(50)
+
+  users users[]
+  associations associations[]
+}
+
+model membreAsso {
+  users users @relation(fields: [userId], references: [id])
+  userId Int
+  associations associations @relation(fields: [associationId], references: [id])
+  associationId Int
+
+  @@id([userId, associationId])
+}
+
+model associations {
+  id Int @id @default(autoincrement())
+  rna String @db.VarChar(100)
+  name String @db.VarChar(100)
+  description String?
+  region region @relation(fields: [regionId], references: [id])
+  regionId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  membreAsso membreAsso[]
+}
+
+model post {
+  id Int @id @default(autoincrement())
+  title String
+  content String
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+  typePost typePost @relation(fields: [typePostId], references: [id])
+  typePostId Int
+
+  vuesPost vuesPost[]
+  postReaction postReaction[]
+}
+
+model typePost {
+  id Int @id @default(autoincrement())
+  libelle String
+
+  post post[]
+}
+
+model vuesPost {
+  post post @relation(fields: [postId], references: [id])
+  postId Int
+  users users @relation(fields: [userId], references: [id])
+  userId Int
+  time DateTime @default(now())
+
+  @@id([postId, userId])
+}
+
+model postReaction {
+  post post @relation(fields: [postId], references: [id])
+  postId Int
+  users users @relation(fields: [userId], references: [id])
+  userId Int
+
+  @@id([userId, postId])
+}
