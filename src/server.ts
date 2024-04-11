@@ -1,6 +1,6 @@
 import express, { Application } from 'express'
 import { IRouter } from './interfaces/router.interface'
-import {callLogger} from "./helpers/logger.helper";
+import { callLogger } from './helpers/logger.helper'
 
 export class Server {
   public express: Application

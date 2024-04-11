@@ -1,9 +1,6 @@
 import { Request, Response } from 'express'
-import { AppDataSource } from '../data-source'
-import { User } from '../entity/User'
-import * as cache from 'memory-cache'
 import { UserDto, UserResponse } from '../dto/user.dto'
-import {UserService} from "../services/user.service";
+import { UserService } from '../services/user.service'
 
 export class UserController {
   private userService: UserService

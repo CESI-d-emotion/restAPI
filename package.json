@@ -34,6 +34,7 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "typeorm": "typeorm-ts-node-commonjs",
+    "migration": "npm run typeorm migration:run -- -d ./src/data-source.ts",
     "prettier": "prettier --write \"src/**/*.ts\"",
     "precommit": "pretty-quick --staged",
     "prepare": "husky .husky"
