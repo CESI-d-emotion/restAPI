@@ -11,6 +11,8 @@
     "@types/node": "^16.11.10",
     "concurrently": "^8.2.2",
     "husky": "^9.0.11",
+    "pino-pretty": "^11.0.0",
+    "plop": "^4.0.1",
     "prettier": "^3.2.5",
     "pretty-quick": "^4.0.0",
     "ts-node": "10.9.1",
@@ -25,6 +27,7 @@
     "jsonwebtoken": "^9.0.2",
     "memory-cache": "^0.2.0",
     "mysql": "^2.14.1",
+    "pino": "^8.20.0",
     "reflect-metadata": "^0.1.13",
     "typeorm": "0.3.20"
   },

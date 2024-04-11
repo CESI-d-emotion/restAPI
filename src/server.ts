@@ -1,5 +1,6 @@
 import express, { Application } from 'express'
 import { IRouter } from './interfaces/router.interface'
+import {callLogger} from "./helpers/logger.helper";
 
 export class Server {
   public express: Application
@@ -19,7 +20,7 @@ export class Server {
 
   private initializeRouters(routers: IRouter[]): void {
     routers.forEach(router => {
-      this.express.use('/api', router.router)
+      this.express.use('/api', callLogger, router.router)
     })
   }
 

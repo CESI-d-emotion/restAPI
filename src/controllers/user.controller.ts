@@ -3,26 +3,27 @@ import { AppDataSource } from '../data-source'
 import { User } from '../entity/User'
 import * as cache from 'memory-cache'
 import { UserDto, UserResponse } from '../dto/user.dto'
+import {UserService} from "../services/user.service";
 
 export class UserController {
+  private userService: UserService
+
+  constructor() {
+    this.userService = new UserService()
+  }
+
   static async getUsers(
     req: Request,
     res: Response
   ): Promise<any | UserDto<UserResponse>> {
-    const data = cache.get('data')
-    if (data) {
-      console.log('Serving from cache')
+    try {
+      const result = await UserService.getUsers()
       return res.status(200).json({
-        data
+        data: result
       })
-    } else {
-      console.log('Serving from db')
-      const userRepo = AppDataSource.getRepository(User)
-      const users = await userRepo.find()
-
-      cache.put('data', users, 6000)
-      return res.status(200).json({
-        data: users
+    } catch (error) {
+      return res.status(500).json({
+        error: error
       })
     }
   }
