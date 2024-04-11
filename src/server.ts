@@ -1,8 +1,7 @@
 import express, { Application } from 'express'
 import { IRouter } from './interfaces/router.interface'
 import { callLogger } from './helpers/logger.helper'
-import { User } from './entities/user.entity'
-import { db } from './helpers/db.helper'
+import cookieParser from 'cookie-parser'
 
 export class Server {
   public express: Application
@@ -18,6 +17,7 @@ export class Server {
 
   private initializeMiddleware(): void {
     this.express.use(express.json())
+    this.express.use(cookieParser())
   }
 
   private initializeRouters(routers: IRouter[]): void {

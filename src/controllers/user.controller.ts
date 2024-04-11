@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
 import { UserDto, UserResponse } from '../dto/user.dto'
 import { UserService } from '../services/user.service'
-import { User } from '../entities/user.entity'
+import { User, UserLoginInput } from '../entities/user.entity'
 import { encryptPassword } from '../helpers/password.helper'
+import { maxAge } from '../helpers/jwt.helper'
 
 export class UserController {
   private userService: UserService
@@ -40,6 +41,7 @@ export class UserController {
       input.password = await encryptPassword(input.password)
 
       const result = await UserService.createUser(input)
+      res.cookie('jwt', result, { httpOnly: true, maxAge: maxAge * 1000 })
       res.status(200).json({
         data: result,
         message: 'User created successfully'
@@ -48,6 +50,29 @@ export class UserController {
       return res.status(500).json({
         error: error,
         message: 'An error occured during signup'
+      })
+    }
+  }
+
+  static async login(req: Request<{}, {}, UserLoginInput>, res: Response) {
+    try {
+      const { email, password } = req.body
+      const result = await UserService.login(email, password)
+      if (!result) {
+        return res.status(401).json({
+          error: 401,
+          message: 'Incorrect email or password'
+        })
+      }
+      res.cookie('jwt', result, { httpOnly: true, maxAge: maxAge * 1000 })
+      res.status(200).json({
+        data: result,
+        message: 'User login successfully'
+      })
+    } catch (error) {
+      return res.status(500).json({
+        error: error,
+        message: 'An error occured during login'
       })
     }
   }

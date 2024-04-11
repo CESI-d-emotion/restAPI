@@ -25,3 +25,8 @@ export class User {
     this.userRoleId = userRoleId
   }
 }
+
+export interface UserLoginInput {
+  email: string
+  password: string
+}
