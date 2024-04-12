@@ -53,7 +53,9 @@ export class UserService {
   }
 
   static async deleteUserById(userId: number): Promise<void> {
-    await this.userRepo.delete(userId)
+    await this.userRepo.delete({
+      where: {id: userId}
+    })
   }
 
 }
