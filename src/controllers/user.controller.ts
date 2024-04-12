@@ -76,4 +76,24 @@ export class UserController {
       })
     }
   }
+  
+  static async deleteUserById(
+    req: Request,
+    res: Response
+  ): Promise<any> {
+    try {
+      const userId: number = parseInt(req.params.userId);
+
+      await UserService.deleteUserById(userId);
+
+      return res.status(200).json({
+        message: 'Utilisateur supprimé avec succès'
+      });
+    } catch (error) {
+       return res.status(500).json({
+        error: error.message
+      });
+    }
+  }
+
 }

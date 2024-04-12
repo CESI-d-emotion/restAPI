@@ -51,4 +51,9 @@ export class UserService {
     }
     return createToken(user.id, user.email)
   }
+
+  static async deleteUserById(userId: number): Promise<void> {
+    await this.userRepo.delete(userId)
+  }
+
 }
