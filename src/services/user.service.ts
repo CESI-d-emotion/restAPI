@@ -20,4 +20,9 @@ export class UserService {
       return users
     }
   }
+
+  static async deleteUserById(userId: number): Promise<void> {
+    await this.userRepo.delete(userId)
+  }
+
 }
