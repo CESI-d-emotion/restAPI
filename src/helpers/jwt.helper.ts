@@ -33,3 +33,27 @@ export const requireAuth = (
     })
   }
 }
+
+export const deserializeUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const accessToken = (req.headers.authorization || '').replace(/^Bearer\s/, '')
+  if (!accessToken) return next()
+
+  const decoded = jwt.verify(accessToken, process.env.JWT_SECRET as string)
+  if (decoded) res.locals.user = decoded
+
+  return next()
+}
+
+export const requireUser = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = res.locals.user
+  if (!user) return res.sendStatus(403)
+  return next()
+}

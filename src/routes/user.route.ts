@@ -1,6 +1,7 @@
 import { IRouter } from '../interfaces/router.interface'
 import { Router } from 'express'
 import { UserController } from '../controllers/user.controller'
+import { requireUser } from '../helpers/jwt.helper'
 
 export class UserRouter implements IRouter {
   public path: string = '/users'
