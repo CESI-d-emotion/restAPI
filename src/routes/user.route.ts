@@ -1,6 +1,7 @@
 import { IRouter } from '../interfaces/router.interface'
 import { Router } from 'express'
 import { UserController } from '../controllers/user.controller'
+import { requireUser } from '../helpers/jwt.helper'
 
 export class UserRouter implements IRouter {
   public path: string = '/users'
@@ -14,5 +15,8 @@ export class UserRouter implements IRouter {
     // GET
     this.router.get(this.path, UserController.getUsers)
     this.router.delete(`${this.path}/:userId`, UserController.deleteUserById);
+    // POST
+    this.router.post(this.path + '/signup', UserController.signup)
+    this.router.post(this.path + '/login', UserController.login)
   }
 }
