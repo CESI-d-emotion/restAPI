@@ -84,14 +84,19 @@ export class UserController {
     try {
       const userId: number = parseInt(req.params.userId);
 
+      //TODO Verifier que le user existe
+      //TODO Si le user existe, verifier que le user connecte est le user a supprimer ou admin
+
       await UserService.deleteUserById(userId);
 
       return res.status(200).json({
+        data: 'Success',
         message: 'Utilisateur supprimé avec succès'
       });
     } catch (error) {
        return res.status(500).json({
-        error: error.message
+        error: error,
+         message: 'An error occured during deleteUserById'
       });
     }
   }
