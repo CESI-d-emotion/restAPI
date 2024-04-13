@@ -58,4 +58,11 @@ export class UserService {
     })
   }
 
+  static async getUserById(userId: number): Promise<any> {
+      const user = await this.userRepo.findUnique({
+        where: { id: userId },
+      });
+    return user;
+  }
+
 }
