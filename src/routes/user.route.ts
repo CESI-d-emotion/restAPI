@@ -14,8 +14,12 @@ export class UserRouter implements IRouter {
   private initializeRoutes(): void {
     // GET
     this.router.get(this.path, UserController.getUsers)
-    this.router.delete(`${this.path}/:userId`, requireUser, UserController.deleteUserById);
-    this.router.get(`${this.path}/:userId`,UserController.getUserById);
+    this.router.delete(
+      `${this.path}/:userId`,
+      requireUser,
+      UserController.deleteUserById
+    )
+    this.router.get(`${this.path}/:userId`, UserController.getUserById)
     // POST
     this.router.post(this.path + '/signup', UserController.signup)
     this.router.post(this.path + '/login', UserController.login)

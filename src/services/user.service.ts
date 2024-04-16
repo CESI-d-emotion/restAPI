@@ -54,15 +54,14 @@ export class UserService {
 
   static async deleteUserById(userId: number): Promise<void> {
     await this.userRepo.delete({
-      where: {id: userId}
+      where: { id: userId }
     })
   }
 
   static async getUserById(userId: number): Promise<any> {
-      const user = await this.userRepo.findUnique({
-        where: { id: userId },
-      });
-    return user;
+    const user = await this.userRepo.findUnique({
+      where: { id: userId }
+    })
+    return user
   }
-
 }

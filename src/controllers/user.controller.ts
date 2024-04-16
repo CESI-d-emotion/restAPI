@@ -4,9 +4,9 @@ import { UserService } from '../services/user.service'
 import { User, UserLoginInput } from '../entities/user.entity'
 import { encryptPassword } from '../helpers/password.helper'
 import { maxAge } from '../helpers/jwt.helper'
+import { ResponseDTO, toResponseDTO } from '../dto/response.dto'
 
 export class UserController {
-
   static async getUsers(
     req: Request,
     res: Response
@@ -19,6 +19,21 @@ export class UserController {
     } catch (error) {
       return res.status(500).json({
         error: error
+      })
+    }
+  }
+
+  static async getAllUsers(
+    req: Request,
+    res: Response
+  ): Promise<any | ResponseDTO<UserResponse>> {
+    try {
+      const result = await UserService.getUsers()
+      return res.status(200).json(toResponseDTO(result, 200))
+    } catch (e) {
+      return res.status(500).json({
+        code: 500,
+        data: e
       })
     }
   }
@@ -71,65 +86,25 @@ export class UserController {
       })
     }
   }
-  
-  static async deleteUserById(
-    req: Request,
-    res: Response
-  ): Promise<any> {
+
+  static async deleteUserById(req: Request, res: Response): Promise<any> {
     try {
-      const userId: number = parseInt(req.params.userId);
+      const userId: number = parseInt(req.params.userId)
 
-      //Verifier que le user existe
-      if(userId == 0){
-        return res.status(400).json({
-          message : 'Id utilisateur vide',
-        })
-      }
-
-      const user = await UserService.getUserById(userId);
-      if(!user){
-        return res.status(404).json({
-          message : 'Utilisateur non trouvé',
-        })
-      }
-
+      //TODO Verifier que le user existe
       //TODO Si le user existe, verifier que le user connecte est le user a supprimer ou admin
 
-      await UserService.deleteUserById(userId);
+      await UserService.deleteUserById(userId)
 
       return res.status(200).json({
         data: 'Success',
         message: 'Utilisateur supprimé avec succès'
-      });
+      })
     } catch (error) {
-       return res.status(500).json({
+      return res.status(500).json({
         error: error,
-         message: 'An error occured during deleteUserById'
-      });
+        message: 'An error occured during deleteUserById'
+      })
     }
   }
-
-    static async getUserById(
-      req: Request,
-      res: Response
-    ): Promise<any | UserDto<UserResponse>> {
-      const userId: number = parseInt(req.params.userId);
-
-      if(userId == 0){
-        return res.status(400).json({
-          message : 'Id utilisateur vide',
-        })
-      }
-
-      try {
-        const result = await UserService.getUserById(userId)
-        return res.status(200).json({
-          data: result
-        })
-      } catch (error) {
-        return res.status(500).json({
-          error: error
-        })
-      }
-    }
 }
