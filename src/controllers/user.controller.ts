@@ -79,7 +79,20 @@ export class UserController {
     try {
       const userId: number = parseInt(req.params.userId);
 
-      //TODO Verifier que le user existe
+      //Verifier que le user existe
+      if(userId == 0){
+        return res.status(400).json({
+          message : 'Id utilisateur vide',
+        })
+      }
+
+      const user = await UserService.getUserById(userId);
+      if(!user){
+        return res.status(404).json({
+          message : 'Utilisateur non trouvé',
+        })
+      }
+
       //TODO Si le user existe, verifier que le user connecte est le user a supprimer ou admin
 
       await UserService.deleteUserById(userId);
@@ -96,4 +109,27 @@ export class UserController {
     }
   }
 
+    static async getUserById(
+      req: Request,
+      res: Response
+    ): Promise<any | UserDto<UserResponse>> {
+      const userId: number = parseInt(req.params.userId);
+
+      if(userId == 0){
+        return res.status(400).json({
+          message : 'Id utilisateur vide',
+        })
+      }
+
+      try {
+        const result = await UserService.getUserById(userId)
+        return res.status(200).json({
+          data: result
+        })
+      } catch (error) {
+        return res.status(500).json({
+          error: error
+        })
+      }
+    }
 }
