@@ -1,21 +1,23 @@
 import { Request, Response } from 'express'
-import { UserDto, UserResponse } from '../dto/user.dto'
+import { UserResponse } from '../dto/user.dto'
 import { UserService } from '../services/user.service'
 import { User, UserLoginInput } from '../entities/user.entity'
 import { encryptPassword } from '../helpers/password.helper'
 import { maxAge } from '../helpers/jwt.helper'
+import {
+  ResponseDTO,
+  SingleMessageDTO,
+  toResponseDTO
+} from '../dto/response.dto'
 
 export class UserController {
-
   static async getUsers(
     req: Request,
     res: Response
-  ): Promise<any | UserDto<UserResponse>> {
+  ): Promise<any | ResponseDTO<UserResponse>> {
     try {
       const result = await UserService.getUsers()
-      return res.status(200).json({
-        data: result
-      })
+      return res.status(200).json(toResponseDTO<UserResponse>(result, 200))
     } catch (error) {
       return res.status(500).json({
         error: error
@@ -23,7 +25,10 @@ export class UserController {
     }
   }
 
-  static async signup(req: Request<{}, {}, User>, res: Response) {
+  static async signup(
+    req: Request<{}, {}, User>,
+    res: Response
+  ): Promise<any | ResponseDTO<SingleMessageDTO>> {
     try {
       const input = req.body
       if (input.password !== input.passwordConfirmation) {
@@ -37,10 +42,9 @@ export class UserController {
 
       const result = await UserService.createUser(input)
       res.cookie('jwt', result, { httpOnly: true, maxAge: maxAge * 1000 })
-      return res.status(200).json({
-        data: result,
-        message: 'User created successfully'
-      })
+      return res
+        .status(200)
+        .json(toResponseDTO<SingleMessageDTO>('User created successfully', 200))
     } catch (error) {
       return res.status(500).json({
         error: error,
@@ -49,7 +53,10 @@ export class UserController {
     }
   }
 
-  static async login(req: Request<{}, {}, UserLoginInput>, res: Response) {
+  static async login(
+    req: Request<{}, {}, UserLoginInput>,
+    res: Response
+  ): Promise<any | ResponseDTO<SingleMessageDTO>> {
     try {
       const { email, password } = req.body
       const result = await UserService.login(email, password)
@@ -60,10 +67,9 @@ export class UserController {
         })
       }
       res.cookie('jwt', result, { httpOnly: true, maxAge: maxAge * 1000 })
-      res.status(200).json({
-        data: result,
-        message: 'User login successfully'
-      })
+      res
+        .status(200)
+        .json(toResponseDTO<SingleMessageDTO>('User logged in!', 200))
     } catch (error) {
       return res.status(500).json({
         error: error,
@@ -71,65 +77,60 @@ export class UserController {
       })
     }
   }
-  
+
   static async deleteUserById(
     req: Request,
     res: Response
-  ): Promise<any> {
+  ): Promise<any | ResponseDTO<SingleMessageDTO>> {
     try {
-      const userId: number = parseInt(req.params.userId);
+      const userId: number = parseInt(req.params.userId)
 
-      //Verifier que le user existe
-      if(userId == 0){
+      if (userId == 0) {
         return res.status(400).json({
-          message : 'Id utilisateur vide',
+          message: 'Id utilisateur vide'
         })
       }
 
-      const user = await UserService.getUserById(userId);
-      if(!user){
+      const user = await UserService.getUserById(userId)
+      if (!user) {
         return res.status(404).json({
-          message : 'Utilisateur non trouvé',
+          message: 'Utilisateur non trouvé'
         })
       }
-
       //TODO Si le user existe, verifier que le user connecte est le user a supprimer ou admin
 
-      await UserService.deleteUserById(userId);
+      await UserService.deleteUserById(userId)
 
-      return res.status(200).json({
-        data: 'Success',
-        message: 'Utilisateur supprimé avec succès'
-      });
+      return res
+        .status(200)
+        .json(toResponseDTO<SingleMessageDTO>('User has been deleted', 200))
     } catch (error) {
-       return res.status(500).json({
+      return res.status(500).json({
         error: error,
-         message: 'An error occured during deleteUserById'
-      });
+        message: 'An error occured during deleteUserById'
+      })
     }
   }
 
-    static async getUserById(
-      req: Request,
-      res: Response
-    ): Promise<any | UserDto<UserResponse>> {
-      const userId: number = parseInt(req.params.userId);
+  static async getUserById(
+    req: Request,
+    res: Response
+  ): Promise<any | ResponseDTO<UserResponse>> {
+    const userId: number = parseInt(req.params.userId)
 
-      if(userId == 0){
-        return res.status(400).json({
-          message : 'Id utilisateur vide',
-        })
-      }
-
-      try {
-        const result = await UserService.getUserById(userId)
-        return res.status(200).json({
-          data: result
-        })
-      } catch (error) {
-        return res.status(500).json({
-          error: error
-        })
-      }
+    if (userId == 0) {
+      return res.status(400).json({
+        message: 'Id utilisateur vide'
+      })
     }
+
+    try {
+      const result = await UserService.getUserById(userId)
+      return res.status(200).json(toResponseDTO<UserResponse>(result, 200))
+    } catch (error) {
+      return res.status(500).json({
+        error: error
+      })
+    }
+  }
 }
