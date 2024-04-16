@@ -6,11 +6,6 @@ import { encryptPassword } from '../helpers/password.helper'
 import { maxAge } from '../helpers/jwt.helper'
 
 export class UserController {
-  private userService: UserService
-
-  constructor() {
-    this.userService = new UserService()
-  }
 
   static async getUsers(
     req: Request,
@@ -32,7 +27,7 @@ export class UserController {
     try {
       const input = req.body
       if (input.password !== input.passwordConfirmation) {
-        res.status(400).json({
+        return res.status(400).json({
           error: 400,
           message: 'Passwords do not match'
         })
@@ -42,7 +37,7 @@ export class UserController {
 
       const result = await UserService.createUser(input)
       res.cookie('jwt', result, { httpOnly: true, maxAge: maxAge * 1000 })
-      res.status(200).json({
+      return res.status(200).json({
         data: result,
         message: 'User created successfully'
       })

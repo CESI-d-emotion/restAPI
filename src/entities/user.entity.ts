@@ -1,11 +1,11 @@
 export class User {
-  public firstName: string
-  public lastName: string
-  public email: string
+  public readonly firstName: string
+  public readonly lastName: string
+  public readonly email: string
   public password: string
-  public passwordConfirmation: string
-  public regionId: number
-  public userRoleId: number
+  public readonly passwordConfirmation: string
+  public readonly regionId: number
+  public readonly userRoleId: number
 
   constructor(
     firstName: string,
