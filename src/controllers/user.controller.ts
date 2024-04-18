@@ -84,27 +84,37 @@ export class UserController {
   ): Promise<any | ResponseDTO<SingleMessageDTO>> {
     try {
       const userId: number = parseInt(req.params.userId)
+      const connectedUser = res.locals.user;
 
-      if (userId == 0) {
-        return res.status(400).json({
-          message: 'Id utilisateur vide'
-        })
-      }
+      const user = await UserService.getUserById(connectedUser.id)
 
-      const user = await UserService.getUserById(userId)
-      if (!user) {
-        return res.status(404).json({
-          message: 'Utilisateur non trouvé'
-        })
-      }
-      //TODO Si le user existe, verifier que le user connecte est le user a supprimer ou admin
+      //verifier que le user connecte est le user a supprimer ou admin
+      if (connectedUser.id === userId || user.userRoleId === 2) {
+        //Verifier que le user existe
+        if (userId == 0) {
+          return res.status(400).json({
+            message: 'Id utilisateur vide',
+          })
+        }
+
+        const user = await UserService.getUserById(userId)
+        if (!user) {
+          return res.status(404).json({
+            message: 'Utilisateur non trouvé'
+          })
+        }
 
       await UserService.deleteUserById(userId)
 
       return res
         .status(200)
         .json(toResponseDTO<SingleMessageDTO>('User has been deleted', 200))
-    } catch (error) {
+      }else{
+        return res.status(401).json({
+          message: 'non autorisé'
+        })
+      }
+    }catch (error) {
       return res.status(500).json({
         error: error,
         message: 'An error occured during deleteUserById'
