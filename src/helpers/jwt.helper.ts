@@ -57,3 +57,13 @@ export const requireUser = (
   if (!user) return res.sendStatus(403)
   return next()
 }
+
+export const requireAssociation = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const association = res.locals.association
+  if (!association) return res.sendStatus(403)
+  return next()
+}
