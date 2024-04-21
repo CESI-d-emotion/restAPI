@@ -51,6 +51,5 @@ export class AssociationRouter implements IRouter {
 
     // POST : Route pour se connecter en tant qu'association
     this.router.post(this.path + '/login', AssociationController.login)
-
   }
 }

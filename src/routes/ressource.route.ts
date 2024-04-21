@@ -1,7 +1,7 @@
 import { IRouter } from '../interfaces/router.interface'
 import { Router } from 'express'
 import { RessourceController } from '../controllers/ressource.controller'
-import { requireRessource} from '../helpers/jwt.helper'
+import { requireRessource } from '../helpers/jwt.helper'
 
 export class RessourceRouter implements IRouter {
   public path: string = '/ressource'

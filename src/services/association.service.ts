@@ -1,7 +1,7 @@
 import * as cache from 'memory-cache'
 import { log } from '../helpers/logger.helper'
 import { db } from '../helpers/db.helper'
-import { Association } from '../entities/association.entity'
+import { Association, dbAssociation } from '../entities/association.entity'
 import { decryptPassword } from '../helpers/password.helper'
 
 export class AssociationService {
@@ -39,7 +39,7 @@ export class AssociationService {
         password: association.password,
         createdAt: new Date(),
         updatedAt: new Date(),
-        region: {connect:{id: association.regionId }}
+        region: { connect: { id: association.regionId } }
       }
     })
     // TODO : return createToken(result.id, result.email)
@@ -93,16 +93,17 @@ export class AssociationService {
    * @param keyword le mot-clé de recherche
    * @returns une liste d'associations correspondant au mot-clé
    */
-  static async searchAssociations(keyword: string){
+  static async searchAssociations(keyword: string) {
     // Recherche les associations dont le nom ou la description correspond au mot-clé
     return this.associationRepo.findMany({
-      where:
-        { name: {
-            contains:keyword
-          },
+      where: {
+        name: {
+          contains: keyword
+        },
         description: {
-          contains:keyword
-        }}
+          contains: keyword
+        }
+      }
     })
   }
 
@@ -110,7 +111,7 @@ export class AssociationService {
    * Trier les associations par la date de création en ordre croissant
    * @returns une liste d'associations triées
    */
-  static async triAssociationsByDateAsc(): Promise<Association[]> {
+  static async triAssociationsByDateAsc() {
     // Récupérer les associations triées par la date de création en ordre ascendant
     const associations = await this.associationRepo.findMany({
       orderBy: {
@@ -124,7 +125,7 @@ export class AssociationService {
    * Trier les associations par la date de création en ordre décroissant
    * @returns une liste d'associations triées
    */
-  static async triAssociationsByDateDesc(): Promise<Association[]> {
+  static async triAssociationsByDateDesc() {
     // Récupérer les associations triées par la date de création en ordre décroissant
     const associations = await this.associationRepo.findMany({
       orderBy: {
@@ -133,5 +134,4 @@ export class AssociationService {
     })
     return associations
   }
-
 }

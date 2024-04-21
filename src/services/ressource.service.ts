@@ -3,7 +3,7 @@ import { log } from '../helpers/logger.helper'
 import { db } from '../helpers/db.helper'
 import { Ressource } from '../entities/ressource.entity'
 
-export class RessourceService{
+export class RessourceService {
   private static ressourceRepo = db.post
 
   /**
@@ -70,10 +70,7 @@ export class RessourceService{
   static async searchRessources(keywork: string): Promise<Ressource[]> {
     // Recherche les ressources dont le titre ou le content correspond au mot-clé
     const ressources = await this.ressourceRepo.find({
-      where: [
-        { titre: Like(`%${keywork}%`) },
-        { content: Like(`%${keywork}`) }
-      ],
+      where: [{ titre: Like(`%${keywork}%`) }, { content: Like(`%${keywork}`) }]
     })
     return ressources
   }
@@ -105,5 +102,4 @@ export class RessourceService{
     })
     return ressources
   }
-
 }

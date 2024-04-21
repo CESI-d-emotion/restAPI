@@ -14,7 +14,14 @@ export class HealthCheckRouter implements IRouter {
   private initializeRoutes(): void {
     // GET
     this.router.get(`${this.path}/public`, HealthcheckController.publicCheck)
-    this.router.get(`${this.path}/private`, requireUser, HealthcheckController.privateCheck)
-    this.router.get(`${this.path}/launch/the/data/into/space/to/the/moon`, HealthcheckController.ignite)
+    this.router.get(
+      `${this.path}/private`,
+      requireUser,
+      HealthcheckController.privateCheck
+    )
+    this.router.get(
+      `${this.path}/launch/the/data/into/space/to/the/moon`,
+      HealthcheckController.ignite
+    )
   }
 }

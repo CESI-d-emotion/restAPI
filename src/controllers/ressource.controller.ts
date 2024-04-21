@@ -1,11 +1,14 @@
 import { Request, Response } from 'express'
-import { ResponseDTO, SingleMessageDTO, toResponseDTO } from '../dto/response.dto'
+import {
+  ResponseDTO,
+  SingleMessageDTO,
+  toResponseDTO
+} from '../dto/response.dto'
 import { RessourceResponse } from '../dto/ressource.dto'
 import { Ressource } from '../entities/ressource.entity'
 import { RessourceService } from '../services/ressource.service'
 
 export class RessourceController {
-
   // Méthode pour récupérer toutes les ressources
   static async getRessource(
     req: Request,
@@ -50,7 +53,9 @@ export class RessourceController {
       await RessourceService.deleteRessourceById(ressourceId)
       return res
         .status(200)
-        .json(toResponseDTO<SingleMessageDTO>('Ressource has been deleted!', 200))
+        .json(
+          toResponseDTO<SingleMessageDTO>('Ressource has been deleted!', 200)
+        )
     } catch (error) {
       return res.status(500).json({
         error: error,
@@ -84,9 +89,7 @@ export class RessourceController {
         })
       }
 
-      return res
-        .status(200)
-        .json(toResponseDTO<RessourceResponse>(result, 200))
+      return res.status(200).json(toResponseDTO<RessourceResponse>(result, 200))
     } catch (error) {
       return res.status(500).json({
         error: error,
@@ -113,7 +116,9 @@ export class RessourceController {
       }
 
       // Recherche des ressources correspondant au mot-clé
-      const ressources = await RessourceService.searchRessources(keyword.toString())
+      const ressources = await RessourceService.searchRessources(
+        keyword.toString()
+      )
       return res
         .status(200)
         .json(toResponseDTO<RessourceResponse[]>(ressources, 200))
@@ -166,5 +171,4 @@ export class RessourceController {
       })
     }
   }
-
 }

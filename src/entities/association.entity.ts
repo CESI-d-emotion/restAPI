@@ -29,20 +29,31 @@ export class Association {
   }
 }
 
-
 export interface AssociationLoginInput {
   email: string
   password: string
 }
 
-export interface associationRegisterInput{
+export interface associationRegisterInput {
   rna: string
   name: string
   email: string
   description: string | null
-   password: string
+  password: string
   passwordConfirmation: string | null
   createdAt: Date
   updatedAt: Date
-   regionId: number
+  regionId: number
+}
+
+export interface dbAssociation {
+  id: number
+  rna: string
+  name: string
+  email: string
+  description: string | null
+  password: string
+  createdAt: Date
+  updatedAt: Date
+  regionId: number
 }
