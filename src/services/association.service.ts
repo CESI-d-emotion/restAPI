@@ -3,10 +3,9 @@ import { log } from '../helpers/logger.helper'
 import { db } from '../helpers/db.helper'
 import { Association } from '../entities/association.entity'
 import { decryptPassword } from '../helpers/password.helper'
-import { Like } from 'typeorm';
 
 export class AssociationService {
-  private static associationRepo = db.association
+  private static associationRepo = db.associations
 
   /**
    * Récupère les associations de la mémoire cache ou de la base de données
@@ -34,12 +33,13 @@ export class AssociationService {
     const result = await this.associationRepo.create({
       data: {
         rna: association.rna,
-        nom: association.nom,
+        name: association.name,
         email: association.email,
         description: association.description,
         password: association.password,
-        createAt: new Date(),
-        updateAt: new Date()
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        region: {connect:{id: association.regionId }}
       }
     })
     // TODO : return createToken(result.id, result.email)
@@ -82,7 +82,7 @@ export class AssociationService {
    * @param associationId l'ID de l'association à récupérer
    * @returns l'association correspondante ou null si non trouvée
    */
-  static async getAssociationById(associationId: number): Promise<void> {
+  static async getAssociationById(associationId: number): Promise<any> {
     return this.associationRepo.findUnique({
       where: { id: associationId }
     })
@@ -90,18 +90,20 @@ export class AssociationService {
 
   /**
    * Recherche des associations par non ou description
-   * @param keywork le mot-clé de recherche
+   * @param keyword le mot-clé de recherche
    * @returns une liste d'associations correspondant au mot-clé
    */
-  static async searchAssociations(keywork: string): Promise<Association[]> {
+  static async searchAssociations(keyword: string){
     // Recherche les associations dont le nom ou la description correspond au mot-clé
-    const associations = await this.associationRepo.find({
-      where: [
-        { nom: Like(`%${keywork}%`) },
-        { description: Like(`%${keywork}`)}
-      ],
+    return this.associationRepo.findMany({
+      where:
+        { name: {
+            contains:keyword
+          },
+        description: {
+          contains:keyword
+        }}
     })
-    return associations
   }
 
   /**
@@ -110,9 +112,9 @@ export class AssociationService {
    */
   static async triAssociationsByDateAsc(): Promise<Association[]> {
     // Récupérer les associations triées par la date de création en ordre ascendant
-    const associations = await this.associationRepo.find({
-      order: {
-        createAt: 'ASC'
+    const associations = await this.associationRepo.findMany({
+      orderBy: {
+        createdAt: 'asc'
       }
     })
     return associations
@@ -124,9 +126,9 @@ export class AssociationService {
    */
   static async triAssociationsByDateDesc(): Promise<Association[]> {
     // Récupérer les associations triées par la date de création en ordre décroissant
-    const associations = await this.associationRepo.find({
-      order: {
-        createAt: 'DESC'
+    const associations = await this.associationRepo.findMany({
+      orderBy: {
+        createdAt: 'desc'
       }
     })
     return associations

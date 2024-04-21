@@ -1,31 +1,31 @@
 export class Association {
   public readonly rna: string
-  public readonly nom: string
+  public readonly name: string
   public readonly email: string
-  public readonly description: string
+  public readonly description: string | null
   public password: string
-  public readonly passwordConfirmation: string
-  public readonly createAt: Date
-  public readonly updateAt: Date
+  public readonly createdAt: Date
+  public readonly updatedAt: Date
+  public regionId: number
 
   constructor(
     rna: string,
-    nom: string,
+    name: string,
     email: string,
-    description: string,
     password: string,
-    passwordConfirmation: string,
-    createAt: Date = new Date(),
-    updateAt: Date = new Date()
+    createdAt: Date = new Date(),
+    updatedAt: Date = new Date(),
+    regionId: number,
+    description: string | null = null
   ) {
     this.rna = rna
-    this.nom = nom
+    this.name = name
     this.email = email
     this.description = description
     this.password = password
-    this.passwordConfirmation = passwordConfirmation
-    this.createAt = createAt
-    this.updateAt = updateAt
+    this.createdAt = createdAt
+    this.updatedAt = updatedAt
+    this.regionId = regionId
   }
 }
 
@@ -33,4 +33,16 @@ export class Association {
 export interface AssociationLoginInput {
   email: string
   password: string
+}
+
+export interface associationRegisterInput{
+  rna: string
+  name: string
+  email: string
+  description: string | null
+   password: string
+  passwordConfirmation: string | null
+  createdAt: Date
+  updatedAt: Date
+   regionId: number
 }

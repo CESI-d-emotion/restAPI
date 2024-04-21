@@ -60,6 +60,8 @@ model associations {
   id          Int      @id @default(autoincrement())
   rna         String   @db.VarChar(100)
   name        String   @db.VarChar(100)
+  email       String @db.VarChar(100)
+  password String @db.VarChar(100)
   description String?
   region      region   @relation(fields: [regionId], references: [id])
   regionId    Int
@@ -67,6 +69,7 @@ model associations {
   updatedAt   DateTime @updatedAt
 
   membreAsso membreAsso[]
+  post post[]
 }
 
 model post {
@@ -77,6 +80,8 @@ model post {
   updateAt   DateTime @updatedAt
   typePost   typePost @relation(fields: [typePostId], references: [id])
   typePostId Int
+  author associations @relation(fields: [authorId], references: [id])
+  authorId Int
 
   vuesPost     vuesPost[]
   postReaction postReaction[]

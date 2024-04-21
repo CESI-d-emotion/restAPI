@@ -2,12 +2,9 @@ import * as cache from 'memory-cache'
 import { log } from '../helpers/logger.helper'
 import { db } from '../helpers/db.helper'
 import { Ressource } from '../entities/ressource.entity'
-import { createToken } from '../helpers/jwt.helper'
-import { decryptPassword } from '../helpers/password.helper'
-import { getRepository, Like } from 'typeorm';
 
 export class RessourceService{
-  private static ressourceRepo = db.ressource
+  private static ressourceRepo = db.post
 
   /**
    * Récupère les ressources de la mémoire cache ou de la base de données
@@ -34,9 +31,9 @@ export class RessourceService{
   static async createRessource(ressource: Ressource) {
     const result = await this.ressourceRepo.create({
       data: {
-        titre: ressource.titre,
+        title: ressource.titre,
         content: ressource.content,
-        createAt: new Date(),
+        createdAt: new Date(),
         updateAt: new Date(),
         association: { connect: { id: ressource.associationId } }
       }

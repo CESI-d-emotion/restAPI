@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { AssociationResponse } from '../dto/association.dto'
 import { AssociationService } from '../services/association.service'
 import { ResponseDTO, SingleMessageDTO, toResponseDTO } from '../dto/response.dto'
-import { Association, AssociationLoginInput } from '../entities/association.entity'
+import { Association, AssociationLoginInput, associationRegisterInput } from '../entities/association.entity'
 import { encryptPassword } from '../helpers/password.helper'
 
 
@@ -25,7 +25,7 @@ export class AssociationController {
 
   // Méthode pour s'inscrire en tant qu'association
   static async signup(
-    req: Request<{}, {}, Association>,
+    req: Request<{}, {}, associationRegisterInput>,
     res: Response
   ): Promise<any | ResponseDTO<SingleMessageDTO>> {
     try {
@@ -191,7 +191,7 @@ export class AssociationController {
       const associations = await AssociationService.searchAssociations(keyword.toString())
       return res
         .status(200)
-        .json(toResponseDTO<AssociationResponse[]>(associations, 200))
+        .json(toResponseDTO<AssociationResponse>(associations, 200))
     } catch (error) {
       return res.status(500).json({
         error: error,

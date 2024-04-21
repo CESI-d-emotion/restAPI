@@ -1,6 +1,6 @@
 export class AssociationResponse {
   public id: number
   public rna: string
-  public nom: string
+  public name: string
   public description: string
 }
