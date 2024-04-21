@@ -2,9 +2,8 @@ import * as cache from 'memory-cache'
 import { log } from '../helpers/logger.helper'
 import { db } from '../helpers/db.helper'
 import { Association } from '../entities/association.entity'
-import { createToken } from '../helpers/jwt.helper'
 import { decryptPassword } from '../helpers/password.helper'
-import { getRepository, Like } from 'typeorm';
+import { Like } from 'typeorm';
 
 export class AssociationService {
   private static associationRepo = db.association
@@ -43,7 +42,7 @@ export class AssociationService {
         updateAt: new Date()
       }
     })
-    return createToken(result.id, result.email)
+    // TODO : return createToken(result.id, result.email)
   }
 
   /**
@@ -65,7 +64,7 @@ export class AssociationService {
     if (!matchPass) {
       return null
     }
-    return createToken(association.id, association.email)
+    // TODO : return createToken(association.id, association.email)
   }
 
   /**
@@ -95,14 +94,40 @@ export class AssociationService {
    * @returns une liste d'associations correspondant au mot-clé
    */
   static async searchAssociations(keywork: string): Promise<Association[]> {
-    const associationRepository = getRepository(Association)
-
     // Recherche les associations dont le nom ou la description correspond au mot-clé
-    const associations = await associationRepository.find({
+    const associations = await this.associationRepo.find({
       where: [
         { nom: Like(`%${keywork}%`) },
         { description: Like(`%${keywork}`)}
       ],
+    })
+    return associations
+  }
+
+  /**
+   * Trier les associations par la date de création en ordre croissant
+   * @returns une liste d'associations triées
+   */
+  static async triAssociationsByDateAsc(): Promise<Association[]> {
+    // Récupérer les associations triées par la date de création en ordre ascendant
+    const associations = await this.associationRepo.find({
+      order: {
+        createAt: 'ASC'
+      }
+    })
+    return associations
+  }
+
+  /**
+   * Trier les associations par la date de création en ordre décroissant
+   * @returns une liste d'associations triées
+   */
+  static async triAssociationsByDateDesc(): Promise<Association[]> {
+    // Récupérer les associations triées par la date de création en ordre décroissant
+    const associations = await this.associationRepo.find({
+      order: {
+        createAt: 'DESC'
+      }
     })
     return associations
   }

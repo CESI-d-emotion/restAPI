@@ -17,12 +17,27 @@ export class AssociationRouter implements IRouter {
 
     // GET : Route pour récupérer une association par ID
     this.router.get(
-      `${this.path}/:userId`,
+      `${this.path}/:associationId`,
       AssociationController.getAssociationById
     )
 
     // GET : Route pour rechercher des associations par nom ou description
-    this.router.get(this.path + '/search', AssociationController.searchAssociations)
+    this.router.get(
+      `${this.path}/search/:keyword`,
+      AssociationController.searchAssociations
+    )
+
+    // GET : Route pour trier les associations par ordre croissant
+    this.router.get(
+      this.path + '/associationAsc',
+      AssociationController.triAssociationsByDateAsc
+    )
+
+    // GET : Route pour trier les associations par ordre décroissant
+    this.router.get(
+      this.path + '/associationDesc',
+      AssociationController.triAssociationsByDateDesc
+    )
 
     // DELETE : Route pour supprimer une association par ID
     this.router.delete(

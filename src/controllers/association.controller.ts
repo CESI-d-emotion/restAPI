@@ -45,11 +45,11 @@ export class AssociationController {
       // Créer l'association
       const result = await AssociationService.createAssociation(input)
       // Définir le cookie JWT
-      res.cookie('jwt', result, {httpOnly: true})
+      res.cookie('jwt', result, { httpOnly: true })
       return res
         .status(200)
         .json(toResponseDTO<SingleMessageDTO>('Association created successfully', 200))
-    } catch(error) {
+    } catch (error) {
       return res.status(500).json({
         error: error,
         message: 'An error occured during signup'
@@ -134,7 +134,7 @@ export class AssociationController {
     }
   }
 
-  // Méthode pour récupérer une association par Id
+  // Méthode pour récupérer une association par ID
   static async getAssociationById(
     req: Request,
     res: Response
@@ -196,6 +196,48 @@ export class AssociationController {
       return res.status(500).json({
         error: error,
         message: 'An error occurred while searching associations'
+      })
+    }
+  }
+
+  // Méthode pour récupérer les associations triées par la date de création en ordre croissant
+  static async triAssociationsByDateAsc(
+    req: Request,
+    res: Response
+  ): Promise<any | ResponseDTO<AssociationResponse[]>> {
+    try {
+      // Appeler le service pour récupérer les associations triées
+      const sortedAssociations = await AssociationService.triAssociationsByDateAsc()
+
+      // Retourner les associations triées
+      return res
+        .status(200)
+        .json(toResponseDTO<AssociationResponse[]>(sortedAssociations, 200))
+    } catch (error) {
+      return res.status(500).json({
+        error: error,
+        message: 'An error occured while fetching sorted associations'
+      })
+    }
+  }
+
+  // Méthode pour récupérer les associations triées par la date de création en ordre décroissant
+  static async triAssociationsByDateDesc(
+    req: Request,
+    res: Response
+  ): Promise<any | ResponseDTO<AssociationResponse[]>> {
+    try {
+      // Appeler le service pour récupérer les associations triées
+      const sortedAssociations = await AssociationService.triAssociationsByDateDesc()
+
+      // Retourner les associations triées
+      return res
+        .status(200)
+        .json(toResponseDTO<AssociationResponse[]>(sortedAssociations, 200))
+    } catch (error) {
+      return res.status(500).json({
+        error: error,
+        message: 'An error occured while fetching sorted associations'
       })
     }
   }

@@ -67,3 +67,13 @@ export const requireAssociation = (
   if (!association) return res.sendStatus(403)
   return next()
 }
+
+export const requireRessource = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const ressource = res.locals.ressource
+  if (!ressource) return res.sendStatus(403)
+  return next()
+}
