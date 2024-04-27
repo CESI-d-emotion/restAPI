@@ -5,7 +5,7 @@ import {
   toResponseDTO
 } from '../dto/response.dto'
 import { RessourceResponse } from '../dto/ressource.dto'
-import { Ressource } from '../entities/ressource.entity'
+import { dbRessource, Ressource } from '../entities/ressource.entity'
 import { RessourceService } from '../services/ressource.service'
 
 export class RessourceController {
@@ -119,9 +119,12 @@ export class RessourceController {
       const ressources = await RessourceService.searchRessources(
         keyword.toString()
       )
+
+      const results = this.remapToResponse(ressources)
+
       return res
         .status(200)
-        .json(toResponseDTO<RessourceResponse[]>(ressources, 200))
+        .json(toResponseDTO<RessourceResponse[]>(results, 200))
     } catch (error) {
       return res.status(500).json({
         error: error,
@@ -139,10 +142,12 @@ export class RessourceController {
       // Appeler le service pour récupérer les ressources triées
       const sortedRessources = await RessourceService.triRessourcesByDateAsc()
 
+      const results = this.remapToResponse(sortedRessources)
+
       // Retourner les ressources triées
       return res
         .status(200)
-        .json(toResponseDTO<RessourceResponse[]>(sortedRessources, 200))
+        .json(toResponseDTO<RessourceResponse[]>(results, 200))
     } catch (error) {
       return res.status(500).json({
         error: error,
@@ -158,17 +163,33 @@ export class RessourceController {
   ): Promise<any | ResponseDTO<RessourceResponse[]>> {
     try {
       // Appeler le service pour récupérer les ressources triées
-      const sortedRessources = await RessourceService.triRessourcesByDateDesc()
+      const sortedRessources =
+        await RessourceService.triRessourcesByDateDesc()
+
+      const results = this.remapToResponse(sortedRessources)
 
       // Retourner les ressources triées
       return res
         .status(200)
-        .json(toResponseDTO<RessourceResponse[]>(sortedRessources, 200))
+        .json(toResponseDTO<RessourceResponse[]>(results, 200))
     } catch (error) {
       return res.status(500).json({
         error: error,
         message: 'An error occured while fetching sorted ressources'
       })
     }
+  }
+
+  static remapToResponse(ressource:dbRessource[]):RessourceResponse[]{
+    return ressource.map(ressource =>{
+      return{
+        title: ressource.title,
+        content: ressource.content,
+        createdAt: ressource.createdAt,
+        updatedAt: ressource.updatedAt,
+        associationId: ressource.associationId,
+        typePostId: ressource.typePostId
+      }
+    })
   }
 }
