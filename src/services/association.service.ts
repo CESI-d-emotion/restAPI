@@ -3,6 +3,7 @@ import { log } from '../helpers/logger.helper'
 import { db } from '../helpers/db.helper'
 import { Association, dbAssociation } from '../entities/association.entity'
 import { decryptPassword } from '../helpers/password.helper'
+import { createToken } from '../helpers/jwt.helper'
 
 export class AssociationService {
   private static associationRepo = db.associations
@@ -42,7 +43,7 @@ export class AssociationService {
         region: { connect: { id: association.regionId } }
       }
     })
-    // TODO : return createToken(result.id, result.email)
+    return createToken(result.id, result.email)
   }
 
   /**
@@ -64,7 +65,7 @@ export class AssociationService {
     if (!matchPass) {
       return null
     }
-    // TODO : return createToken(association.id, association.email)
+    return createToken(association.id, association.email)
   }
 
   /**

@@ -120,11 +120,11 @@ export class RessourceController {
         keyword.toString()
       )
 
-      const results = this.remapToResponse(ressources)
+      // const results = this.remapToResponse(ressources)
 
       return res
         .status(200)
-        .json(toResponseDTO<RessourceResponse[]>(results, 200))
+        .json(toResponseDTO<dbRessource[]>(ressources, 200))
     } catch (error) {
       return res.status(500).json({
         error: error,
@@ -142,12 +142,12 @@ export class RessourceController {
       // Appeler le service pour récupérer les ressources triées
       const sortedRessources = await RessourceService.triRessourcesByDateAsc()
 
-      const results = this.remapToResponse(sortedRessources)
+      // const results = this.remapToResponse(sortedRessources)
 
       // Retourner les ressources triées
       return res
         .status(200)
-        .json(toResponseDTO<RessourceResponse[]>(results, 200))
+        .json(toResponseDTO<dbRessource[]>(sortedRessources, 200))
     } catch (error) {
       return res.status(500).json({
         error: error,
@@ -166,12 +166,12 @@ export class RessourceController {
       const sortedRessources =
         await RessourceService.triRessourcesByDateDesc()
 
-      const results = this.remapToResponse(sortedRessources)
+      // const results = this.remapToResponse(sortedRessources)
 
       // Retourner les ressources triées
       return res
         .status(200)
-        .json(toResponseDTO<RessourceResponse[]>(results, 200))
+        .json(toResponseDTO<dbRessource[]>(sortedRessources, 200))
     } catch (error) {
       return res.status(500).json({
         error: error,
@@ -180,16 +180,17 @@ export class RessourceController {
     }
   }
 
-  static remapToResponse(ressource:dbRessource[]):RessourceResponse[]{
-    return ressource.map(ressource =>{
-      return{
-        title: ressource.title,
-        content: ressource.content,
-        createdAt: ressource.createdAt,
-        updatedAt: ressource.updatedAt,
-        associationId: ressource.associationId,
-        typePostId: ressource.typePostId
-      }
-    })
-  }
+  // static remapToResponse(ressource:dbRessource[]):RessourceResponse[]{
+  //   return ressource.map(ressource =>{
+  //     return{
+  //       id: ressource.id,
+  //       title: ressource.title,
+  //       content: ressource.content,
+  //       createdAt: ressource.createdAt,
+  //       updatedAt: ressource.updatedAt,
+  //       associationId: ressource.associationId,
+  //       typePostId: ressource.typePostId
+  //     }
+  //   })
+  // }
 }

@@ -13,6 +13,7 @@ import {
   dbAssociation
 } from '../entities/association.entity'
 import { encryptPassword } from '../helpers/password.helper'
+import { maxAge } from '../helpers/jwt.helper'
 
 export class AssociationController {
   // Méthode pour récupérer toutes les associations
@@ -54,7 +55,7 @@ export class AssociationController {
       // Créer l'association
       const result = await AssociationService.createAssociation(input)
       // Définir le cookie JWT
-      res.cookie('jwt', result, { httpOnly: true })
+      res.cookie('jwt', result, { httpOnly: true,maxAge: maxAge * 1000  })
       return res
         .status(200)
         .json(
@@ -194,7 +195,7 @@ export class AssociationController {
   ): Promise<any | ResponseDTO<AssociationResponse[]>> {
     try {
       // Récupère le mot-clé de la requête query
-      const { keyword } = req.query
+      const { keyword } = req.params
 
       // Vérifie si le mot clé est présent
       if (!keyword) {

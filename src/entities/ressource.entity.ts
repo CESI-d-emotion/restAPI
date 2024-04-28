@@ -1,4 +1,5 @@
 export class Ressource {
+  public readonly  id: number
   public readonly title: string
   public readonly content: string
   public readonly createAt: Date
@@ -7,6 +8,7 @@ export class Ressource {
   public readonly typePostId: number
 
   constructor(
+    id: number,
     title: string,
     content: string,
     createAt: Date = new Date(),
@@ -14,6 +16,7 @@ export class Ressource {
     associationId: number,
     typePostId: number,
   ) {
+    this.id = id
     this.title = title
     this.content = content
     this.createAt = createAt
@@ -24,11 +27,12 @@ export class Ressource {
 }
 
 export interface dbRessource{
+  id:number
   title:string
   content:string
   createdAt:Date
   updatedAt:Date
-  associationId:number
+  authorId:number
   typePostId:number
 
 }

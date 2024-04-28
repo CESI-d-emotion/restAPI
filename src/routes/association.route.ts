@@ -17,7 +17,7 @@ export class AssociationRouter implements IRouter {
 
     // GET : Route pour récupérer une association par ID
     this.router.get(
-      `${this.path}/:associationId`,
+      `${this.path}/searchById/:associationId`,
       AssociationController.getAssociationById
     )
 
