@@ -1,13 +1,13 @@
 import * as cache from 'memory-cache';
 import { log } from '../helpers/logger.helper';
-import { Prisma, postComment } from '@prisma/client'; // Importez les types Prisma nécessaires
+import { Prisma, Comment } from '@prisma/client'; 
 import { db } from '../helpers/db.helper';
 import { Commentaire } from '../entities/comment.entity';
 
 export class CommentaireService {
-  private static commentaireRepo = db.postComment;
+  private static commentaireRepo = db.comment;
 
-  static async getCommentaireByPost(postId: number): Promise<postComment[]> {
+  static async getCommentByPost(postId: number): Promise<Commentaire[]> {
     const cacheKey = `comments_by_post_${postId}`;
     const cachedData = cache.get(cacheKey);
 
@@ -17,30 +17,39 @@ export class CommentaireService {
     }
 
     log.info('Serving from db');
-    const commentaire = await this.commentaireRepo.findMany({
+    const commentaires = await this.commentaireRepo.findMany({
       where: { postId },
-      include: { user: true, post: true, attachedTo: true, typeObject: true },
+      include: { user: true, post: true, parent: true },
     });
 
-    cache.put(cacheKey, commentaire, 6000);
-    return commentaire;
+    const commentairesFormatted: Commentaire[] = commentaires.map(commentaire => ({
+      id: commentaire.id,
+      userId: commentaire.userId,
+      postId: commentaire.postId,
+      content: commentaire.content,
+      createdAt: commentaire.createdAt,
+      updatedAt: commentaire.updatedAt,
+      parentId: commentaire.parentId, 
+    }));
+
+    cache.put(cacheKey, commentairesFormatted, 6000);
+    return commentairesFormatted;
   }
 
-  static async createCommentaire(commentaire: Commentaire): Promise<postComment | null> {
+  static async createComment(commentaire: Commentaire): Promise<Comment | null> {
     try {
       const createdComment = await this.commentaireRepo.create({
         data: {
-          userId: commentaire.user,
-          postId: commentaire.post,
+          userId: commentaire.userId,
+          postId: commentaire.postId,
           content: commentaire.content,
-          attachedToId: commentaire.attachedTo,
-          typeObjectId: commentaire.typeObject,
+          parentId: commentaire.parentId,
           createdAt: commentaire.createdAt,
           updatedAt: commentaire.updatedAt,
         },
       });
 
-      const cacheKey = `comments_by_post_${commentaire.post}`;
+      const cacheKey = `comments_by_post_${commentaire.postId}`;
       cache.del(cacheKey); 
 
       return createdComment;
@@ -50,9 +59,26 @@ export class CommentaireService {
     }
   }
 
-  static async deleteCommentaireById(commentId: number): Promise<void> {
-    await this.commentaireRepo.delete({
-      where: { id: commentId },
-    });
+  static async deleteCommentAndChildrenById(commentId: number): Promise<void> {
+    try {
+      await this.commentaireRepo.delete({
+        where: { id: commentId },
+      });
+
+      await this.commentaireRepo.deleteMany({
+        where: { parentId: commentId },
+      });
+
+      const cacheKeys = cache.keys();
+      for (const key of cacheKeys) {
+        if (key.startsWith(`comments_by_post_`)) {
+          cache.del(key);
+        }
+      }
+      
+    } catch (error) {
+      log.error(`Error deleting commentaire and children: ${error}`);
+      throw error;
+    }
   }
 }

@@ -5,16 +5,26 @@ import { ResponseDTO, SingleMessageDTO, toResponseDTO } from '../dto/response.dt
 
 export class CommentaireController {
 
-    static async deleteCommentaireById(req: Request, res: Response): Promise<void> {
-        const commentId = Number(req.params.commentId);
-    
-        try {
-          await CommentaireService.deleteCommentaireById(commentId);
-          const responseDTO: SingleMessageDTO = { message: 'Commentaire deleted successfully' };
-          res.status(200).json(responseDTO);
-        } catch (error: any) { // Définir le type de l'erreur explicitement
-          res.status(500).json({ error: error.message || 'Internal Server Error' });
-        }
-      }
+  static async deleteCommentById(req: Request, res: Response): Promise<void> {
+    const commentId = Number(req.params.commentId);
 
+    try {
+      await CommentaireService.deleteCommentAndChildrenById(commentId);
+      const responseDTO: SingleMessageDTO = 'Commentaire deleted successfully';
+      res.status(200).json(toResponseDTO(responseDTO, 200)); 
+    } catch (error: any) {
+      res.status(500).json({ error: error.message || 'Internal Server Error' });
+    }
+}
+
+static async getCommentByPost(req: Request, res: Response): Promise<void> {
+    const postId = Number(req.params.postId);
+
+    try {
+      const comments: Commentaire[] = await CommentaireService.getCommentByPost(postId);
+      res.status(200).json(toResponseDTO(comments, 200));
+    } catch (error: any) {
+      res.status(500).json({ error: error.message || 'Internal Server Error' });
+    }
+}
 }
