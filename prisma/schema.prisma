@@ -29,6 +29,7 @@ model users {
   membreAsso   membreAsso[]
   vuesPost     vuesPost[]
   postReaction postReaction[]
+  postComment Comment[]
 }
 
 model userRole {
@@ -85,6 +86,7 @@ model post {
 
   vuesPost     vuesPost[]
   postReaction postReaction[]
+  postComment Comment[]
 }
 
 model typePost {
@@ -113,3 +115,21 @@ model postReaction {
   @@id([userId, postId])
 }
 
+model Comment {
+  id           Int       @id @default(autoincrement())
+  content      String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user       users      @relation(fields: [userId], references: [id])
+  userId       Int
+
+  post         post      @relation(fields: [postId], references: [id])
+  postId       Int
+
+
+  parent       Comment?  @relation("ChildComments", fields: [parentId], references: [id])
+  parentId     Int?
+
+  childComments Comment[] @relation("ChildComments")
+}
