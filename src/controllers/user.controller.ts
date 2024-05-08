@@ -89,7 +89,7 @@ export class UserController {
       const user = await UserService.getUserById(connectedUser.id)
 
       //verifier que le user connecte est le user a supprimer ou admin
-      if (connectedUser.id === userId || user.userRoleId === 2) {
+      if (connectedUser.id === userId || user.userRoleId === 1) {
         //Verifier que le user existe
         if (userId == 0) {
           return res.status(400).json({

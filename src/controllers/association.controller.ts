@@ -128,6 +128,7 @@ export class AssociationController {
         })
       }
 
+      // TODO: User admin peut delete
       // Vérifier si l'association est connectée
       const jwtCookie = req.cookies.jwt
       if (!jwtCookie) {
