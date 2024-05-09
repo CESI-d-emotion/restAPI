@@ -205,13 +205,14 @@ export class AssociationController {
           message: 'Keyword is required'
         })
       }
-
       // Recherche des associations correspondant au mot-clé
-      const associations = await AssociationService.searchAssociations(
-        keyword.toString()
+      const associationSearch = await AssociationService.searchAssociations(
+        keyword
       )
 
-      const results = this.remapToResponse(associations)
+      //TODO: corriger bug remapToResponse
+      const results = this.remapToResponse(associationSearch)
+
 
       return res
         .status(200)
@@ -277,14 +278,49 @@ export class AssociationController {
     return assos.map(asso => {
       return {
         id: asso.id,
-        name: asso.name,
-        description: asso.description,
-        email: asso.email,
         rna: asso.rna,
-        updatedAt: asso.updatedAt,
+        name: asso.name,
+        email: asso.email,
+        description: asso.description,
+        regionId: asso.regionId,
         createdAt: asso.createdAt,
-        regionId: asso.regionId
+        updatedAt: asso.updatedAt,
       }
     })
   }
+
+  // static remapToResponse(assos: dbAssociation[]): AssociationResponse[] {
+  //   const remappedAssos: AssociationResponse[] = [];
+  //   for (const asso of assos) {
+  //     remappedAssos.push({
+  //       id: asso.id,
+  //       rna: asso.rna,
+  //       name: asso.name,
+  //       email: asso.email,
+  //       description: asso.description,
+  //       regionId: asso.regionId,
+  //       createdAt: asso.createdAt,
+  //       updatedAt: asso.updatedAt,
+  //     });
+  //   }
+  //   return remappedAssos;
+  // }
+
+  // static remapToResponse(assos: dbAssociation[]): AssociationResponse[] {
+  //   return assos.reduce<AssociationResponse[]>((remappedAssos, asso) => {
+  //     return [...remappedAssos, {
+  //       id: asso.id,
+  //       rna: asso.rna,
+  //       name: asso.name,
+  //       email: asso.email,
+  //       description: asso.description,
+  //       regionId: asso.regionId,
+  //       createdAt: asso.createdAt,
+  //       updatedAt: asso.updatedAt,
+  //     }];
+  //   }, []);
+  // }
+
+
+
 }
