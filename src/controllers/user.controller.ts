@@ -70,7 +70,7 @@ export class UserController {
       res.cookie('jwt', result, { httpOnly: true, maxAge: maxAge * 1000 })
       res
         .status(200)
-        .json(toResponseDTO<SingleMessageDTO>('User logged in!', 200))
+        .json(toResponseDTO({token: result, message: "OK"}, 200))
     } catch (error) {
       return res.status(500).json({
         error: error,
