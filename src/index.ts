@@ -7,12 +7,14 @@ import { UserRouter } from './routes/user.route'
 import { HealthCheckRouter } from './routes/healthcheck.route'
 import { AssociationRouter } from './routes/association.route'
 import { RessourceRouter } from './routes/ressource.route'
+import { UtilsRouter } from './routes/utils.router'
 
 // const app: Server = new Server([new UserRouter(), new HealthCheckRouter()])
 const app: Server = new Server([
   new UserRouter(),
   new HealthCheckRouter(),
   new AssociationRouter(),
-  new RessourceRouter()
+  new RessourceRouter(),
+  new UtilsRouter()
 ])
 app.listen()

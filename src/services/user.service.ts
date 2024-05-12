@@ -16,7 +16,15 @@ export class UserService {
       return data
     } else {
       log.info('Serving from db')
-      const users = await this.userRepo.findMany()
+      const users = await this.userRepo.findMany({
+        include: {
+          userFollowAssociation: {
+            select: {
+              associationId: true
+            }
+          }
+        }
+      })
 
       cache.put('data', users, 6000)
       return users
@@ -61,7 +69,19 @@ export class UserService {
 
   static async getUserById(userId: number): Promise<any> {
     return this.userRepo.findUnique({
-      where: { id: userId }
+      where: { id: userId },
+      include: {
+        userFollowAssociation: {
+          include: {
+            association: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          }
+        }
+      }
     })
   }
 
