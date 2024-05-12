@@ -58,8 +58,12 @@ export class AssociationController {
       res.cookie('jwt', result, { httpOnly: true, maxAge: maxAge * 1000 })
       return res
         .status(200)
-        .json(toResponseDTO({token: result, message: "Association created successfully"}, 200))
-
+        .json(
+          toResponseDTO(
+            { token: result, message: 'Association created successfully' },
+            200
+          )
+        )
     } catch (error) {
       return res.status(500).json({
         error: error,
@@ -89,8 +93,12 @@ export class AssociationController {
       res.cookie('jwt', result, { httpOnly: true })
       res
         .status(200)
-        .json(toResponseDTO({token: result, message: "Association logged in!"}, 200))
-
+        .json(
+          toResponseDTO(
+            { token: result, message: 'Association logged in!' },
+            200
+          )
+        )
     } catch (error) {
       return res.status(500).json({
         error: error,
@@ -184,9 +192,7 @@ export class AssociationController {
         })
       }
 
-      return res
-        .status(200)
-        .json(toResponseDTO<AssociationResponse>(result, 200))
+      return res.status(200).json(toResponseDTO(result, 200, 'password'))
     } catch (error) {
       return res.status(500).json({
         error: error,
