@@ -97,7 +97,7 @@ export class UserService {
       await this.userFollowRepo.create({
         data: {
           user: { connect: { id: userId } },
-          association: {connect: { id: associationId } },
+          association: { connect: { id: associationId } }
         }
       })
     } else {

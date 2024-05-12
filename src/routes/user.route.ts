@@ -20,7 +20,11 @@ export class UserRouter implements IRouter {
       UserController.deleteUserById
     )
     this.router.get(`${this.path}/:userId`, UserController.getUserById)
-    this.router.get(`${this.path}/followAction/:assoId`, requireUser, UserController.followAction)
+    this.router.get(
+      `${this.path}/followAction/:assoId`,
+      requireUser,
+      UserController.followAction
+    )
     // POST
     this.router.post(this.path + '/signup', UserController.signup)
     this.router.post(this.path + '/login', UserController.login)

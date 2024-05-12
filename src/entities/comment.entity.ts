@@ -34,3 +34,9 @@ export interface dbComment {
   userId: number
   postId: number
 }
+
+export interface ICommentCreateInput {
+  content: string
+  attachedToType: 'ressource' | 'comment'
+  attachedToId: number
+}

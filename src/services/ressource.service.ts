@@ -30,7 +30,40 @@ export class RessourceService {
               name: true
             }
           },
-          typePost: true
+          typePost: true,
+          postReaction: {
+            include: {
+              users: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true
+                }
+              }
+            }
+          },
+          postComment: {
+            include: {
+              childComments: {
+                include: {
+                  user: {
+                    select: {
+                      id: true,
+                      firstName: true,
+                      lastName: true
+                    }
+                  }
+                }
+              },
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true
+                }
+              }
+            }
+          }
         }
       })
       cache.put('data', ressource, 6000)
@@ -82,7 +115,40 @@ export class RessourceService {
             name: true
           }
         },
-        typePost: true
+        typePost: true,
+        postReaction: {
+          include: {
+            users: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true
+              }
+            }
+          }
+        },
+        postComment: {
+          include: {
+            childComments: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true
+                  }
+                }
+              }
+            },
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true
+              }
+            }
+          }
+        }
       }
     })
   }

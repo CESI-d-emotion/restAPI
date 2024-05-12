@@ -73,6 +73,7 @@ model associations {
   membreAsso            membreAsso[]
   post                  post[]
   userFollowAssociation userFollowAssociation[]
+  Comment               Comment[]
 }
 
 model post {
@@ -109,25 +110,27 @@ model vuesPost {
 }
 
 model postReaction {
+  id     Int   @id @default(autoincrement())
   post   post  @relation(fields: [postId], references: [id])
   postId Int
   users  users @relation(fields: [userId], references: [id])
   userId Int
-
-  @@id([userId, postId])
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             Int      @id @default(autoincrement())
+  content        String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  attachedToType String
 
-  user   users @relation(fields: [userId], references: [id])
-  userId Int
+  user           users?        @relation(fields: [userId], references: [id])
+  userId         Int?
+  associations   associations? @relation(fields: [associationsId], references: [id])
+  associationsId Int?
 
-  post   post @relation(fields: [postId], references: [id])
-  postId Int
+  post   post? @relation(fields: [postId], references: [id])
+  postId Int?
 
   parent   Comment? @relation("ChildComments", fields: [parentId], references: [id])
   parentId Int?

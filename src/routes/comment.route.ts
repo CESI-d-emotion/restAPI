@@ -1,9 +1,10 @@
 import { IRouter } from '../interfaces/router.interface'
 import { Router } from 'express'
 import { CommentaireController } from '../controllers/comment.controller'
+import { requireUser } from '../helpers/jwt.helper'
 
 export class CommentRouter implements IRouter {
-  public path: string = '/ressource'
+  public path: string = '/comments'
   public router: Router = Router()
 
   constructor() {
@@ -11,21 +12,22 @@ export class CommentRouter implements IRouter {
   }
 
   private initializeRoutes(): void {
-    this.router.get(
-      `${this.path}/:ressourceId`,
-      CommentaireController.getCommentByPost
-    )
-
     this.router.delete(
       `${this.path}/:commentId`,
+      requireUser,
       CommentaireController.deleteCommentById
     )
 
     this.router.post(
-      `${this.path}/:commentId/reply`,
-      CommentaireController.createReplyToComment
+      `${this.path}`,
+      requireUser,
+      CommentaireController.createComment
     )
 
-    this.router.post(`${this.path}/create`, CommentaireController.createComment)
+    this.router.get(
+      `${this.path}/react/:ressourceId`,
+      requireUser,
+      CommentaireController.react
+    )
   }
 }

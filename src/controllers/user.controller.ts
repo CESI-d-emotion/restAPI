@@ -168,7 +168,7 @@ export class UserController {
         })
       }
       await UserService.followAction(association.id, user.id)
-      return res.status(200).json(toResponseDTO("Follow action OK", 200))
+      return res.status(200).json(toResponseDTO('Follow action OK', 200))
     } catch (err) {
       return res.status(500).json({
         error: err
