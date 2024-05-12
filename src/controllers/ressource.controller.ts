@@ -7,6 +7,10 @@ import {
 import { RessourceResponse } from '../dto/ressource.dto'
 import { dbRessource, Ressource } from '../entities/ressource.entity'
 import { RessourceService } from '../services/ressource.service'
+import { associationRegisterInput } from '../entities/association.entity'
+import { encryptPassword } from '../helpers/password.helper'
+import { AssociationService } from '../services/association.service'
+import { maxAge } from '../helpers/jwt.helper'
 
 export class RessourceController {
   // Méthode pour récupérer toutes les ressources
@@ -105,7 +109,7 @@ export class RessourceController {
   ): Promise<any | ResponseDTO<RessourceResponse[]>> {
     try {
       // Récupère le mot-clé de la requête query
-      const { keyword } = req.query
+      const { keyword } = req.params
 
       // Vérifie si le mot clé est présent
       if (!keyword) {
@@ -176,6 +180,32 @@ export class RessourceController {
       return res.status(500).json({
         error: error,
         message: 'An error occured while fetching sorted ressources'
+      })
+    }
+  }
+
+  static async createRessource(
+    req: Request<{}, {}, Ressource>,
+    res: Response
+  ): Promise<any | ResponseDTO<SingleMessageDTO>> {
+    try {
+      const input = req.body
+
+      // Créer la ressource
+      const result = await RessourceService.createRessource(input)
+      res.cookie('jwt', result, { httpOnly: true,maxAge: maxAge * 1000  })
+      return res
+        .status(200)
+        .json(
+          toResponseDTO<SingleMessageDTO>(
+            'post created successfully',
+            200
+          )
+        )
+    } catch (error) {
+      return res.status(500).json({
+        error: error,
+        message: 'An error occured during create post'
       })
     }
   }

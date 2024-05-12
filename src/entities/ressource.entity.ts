@@ -4,7 +4,7 @@ export class Ressource {
   public readonly content: string
   public readonly createAt: Date
   public readonly updateAt: Date
-  public readonly associationId: number
+  public readonly authorId: number
   public readonly typePostId: number
 
   constructor(
@@ -21,7 +21,7 @@ export class Ressource {
     this.content = content
     this.createAt = createAt
     this.updateAt = updateAt
-    this.associationId = associationId
+    this.authorId = associationId
     this.typePostId = typePostId
   }
 }
@@ -34,5 +34,4 @@ export interface dbRessource{
   updatedAt:Date
   authorId:number
   typePostId:number
-
 }

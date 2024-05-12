@@ -2,6 +2,7 @@ import * as cache from 'memory-cache'
 import { log } from '../helpers/logger.helper'
 import { db } from '../helpers/db.helper'
 import { Ressource } from '../entities/ressource.entity'
+import { createToken } from '../helpers/jwt.helper'
 
 export class RessourceService {
   private static ressourceRepo = db.post
@@ -36,10 +37,11 @@ export class RessourceService {
         createdAt: new Date(),
         updatedAt: new Date(),
         typePost:{connect:{ id: ressource.typePostId }},
-        author: { connect: { id: ressource.associationId }}
+        author: { connect: { id: ressource.authorId }}
       }
     })
     // TODO : CreateToken
+    return createToken(result.id, result.title)
   }
 
   /**

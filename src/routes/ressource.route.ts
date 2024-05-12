@@ -1,7 +1,8 @@
 import { IRouter } from '../interfaces/router.interface'
 import { Router } from 'express'
 import { RessourceController } from '../controllers/ressource.controller'
-import { requireRessource } from '../helpers/jwt.helper'
+import { requireAssociation, requireRessource } from '../helpers/jwt.helper'
+import { AssociationController } from '../controllers/association.controller'
 
 export class RessourceRouter implements IRouter {
   public path: string = '/ressource'
@@ -17,7 +18,7 @@ export class RessourceRouter implements IRouter {
 
     // GET : Route pour récupérer une ressource par ID
     this.router.get(
-      `${this.path}/:ressourceId`,
+      `${this.path}/searchById/:ressourceId`,
       RessourceController.getRessourceById
     )
 
@@ -30,8 +31,14 @@ export class RessourceRouter implements IRouter {
     // DELETE : Route pour supprimer une ressource par ID
     this.router.delete(
       `${this.path}/:ressourceId`,
-      requireRessource,
+      requireAssociation,
       RessourceController.deleteRessourceById
     )
+
+    // POST : Route pour créer une ressource
+    this.router.post(this.path + '/createPost',
+     requireAssociation,
+     RessourceController.createRessource)
+
   }
 }
