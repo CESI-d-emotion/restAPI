@@ -1,7 +1,7 @@
 import { IRouter } from '../interfaces/router.interface'
 import { Router } from 'express'
 import { AssociationController } from '../controllers/association.controller'
-import { requireAssociation } from '../helpers/jwt.helper'
+import { requireAssociation, requireUser } from '../helpers/jwt.helper'
 
 export class AssociationRouter implements IRouter {
   public path: string = '/asso'
@@ -22,27 +22,15 @@ export class AssociationRouter implements IRouter {
     )
 
     // GET : Route pour rechercher des associations par nom ou description
-    this.router.get(
-      `${this.path}/search/:keyword`,
-      AssociationController.searchAssociations
-    )
-
-    // GET : Route pour trier les associations par ordre croissant
-    this.router.get(
-      this.path + '/associationAsc',
-      AssociationController.triAssociationsByDateAsc
-    )
-
-    // GET : Route pour trier les associations par ordre décroissant
-    this.router.get(
-      this.path + '/associationDesc',
-      AssociationController.triAssociationsByDateDesc
+    this.router.post(
+      `${this.path}/search`,
+      AssociationController.filterSearchAsso
     )
 
     // DELETE : Route pour supprimer une association par ID
     this.router.delete(
       `${this.path}/:associationId`,
-      requireAssociation,
+      requireUser,
       AssociationController.deleteAssociationById
     )
 

@@ -57,3 +57,20 @@ export interface dbAssociation {
   updatedAt: Date
   regionId: number
 }
+
+export interface dbAssociationJoin {
+  id: number
+  rna: string
+  name: string
+  email: string
+  description: string | null
+  password: string
+  createdAt: Date
+  updatedAt: Date,
+  regionId: number
+  region: {
+    id: number,
+    name: string,
+    nutsCode: string
+  }
+}

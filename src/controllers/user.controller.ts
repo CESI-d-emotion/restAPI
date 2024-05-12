@@ -17,7 +17,7 @@ export class UserController {
   ): Promise<any | ResponseDTO<UserResponse>> {
     try {
       const result = await UserService.getUsers()
-      return res.status(200).json(toResponseDTO<UserResponse>(result, 200))
+      return res.status(200).json(toResponseDTO(result, 200, 'password'))
     } catch (error) {
       return res.status(500).json({
         error: error
@@ -136,7 +136,7 @@ export class UserController {
 
     try {
       const result = await UserService.getUserById(userId)
-      return res.status(200).json(toResponseDTO<UserResponse>(result, 200))
+      return res.status(200).json(toResponseDTO<User>(result, 200, "password"))
     } catch (error) {
       return res.status(500).json({
         error: error

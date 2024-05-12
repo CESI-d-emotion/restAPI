@@ -14,6 +14,8 @@ import {
 } from '../entities/association.entity'
 import { encryptPassword } from '../helpers/password.helper'
 import { maxAge } from '../helpers/jwt.helper'
+import { IFilterSearchAssoRequest } from '../interfaces/request.interface'
+import { UserService } from '../services/user.service'
 
 export class AssociationController {
   // Méthode pour récupérer toutes les associations
@@ -25,7 +27,7 @@ export class AssociationController {
       const result = await AssociationService.getAssociation()
       return res
         .status(200)
-        .json(toResponseDTO<AssociationResponse>(result, 200))
+        .json(toResponseDTO(result, 200, 'password'))
     } catch (error) {
       return res.status(500).json({
         error: error
@@ -59,7 +61,7 @@ export class AssociationController {
       return res
         .status(200)
         .json(
-          toResponseDTO<SingleMessageDTO>(
+          toResponseDTO(
             'Association created successfully',
             200
           )
@@ -129,12 +131,22 @@ export class AssociationController {
       }
 
       // TODO: User admin peut delete
-      // Vérifier si l'association est connectée
-      const jwtCookie = req.cookies.jwt
-      if (!jwtCookie) {
+      const connectedUser = res.locals.user
+      const user = await UserService.getUserById(connectedUser.id)
+
+      // Verification si pas de user && que l'id présenté ne correspond pas au token
+      if (!user && connectedUser.id !== associationId) {
+        return res.status(400).json({
+          error: 404,
+          message: 'You do not have the rights to execute this operation'
+        })
+      }
+      // Si le token ne correspond pas mais qu'un user est connecté
+      // Vérifie si le user a le role admin
+      if (user.userRoleId !== 1) {
         return res.status(401).json({
-          error: 401,
-          message: 'Association not authenticated'
+          error: 404,
+          message: 'You do not have permission to execute this operation'
         })
       }
 
@@ -189,91 +201,27 @@ export class AssociationController {
     }
   }
 
-  // Méthode pour rechercher des associations par nom ou description
-  static async searchAssociations(
-    req: Request,
-    res: Response
-  ): Promise<any | ResponseDTO<AssociationResponse[]>> {
+  // New asso search
+  static async filterSearchAsso(req: Request<{}, {}, IFilterSearchAssoRequest>, res: Response): Promise<any | ResponseDTO<AssociationResponse[] | []>> {
+    // Recupere les filtres / options
+    const { sort, keyword } = req.body
+
+    const searchWord = keyword ? keyword : ''
+
     try {
-      // Récupère le mot-clé de la requête query
-      const { keyword } = req.params
-
-      // Vérifie si le mot clé est présent
-      if (!keyword) {
-        return res.status(400).json({
-          error: 400,
-          message: 'Keyword is required'
-        })
-      }
-
-      // Recherche des associations correspondant au mot-clé
-      const associations = await AssociationService.searchAssociations(
-        keyword.toString()
-      )
-
-      const results = this.remapToResponse(associations)
-
-      return res
-        .status(200)
-        .json(toResponseDTO<AssociationResponse[]>(results, 200))
-    } catch (error) {
+      const result = await AssociationService.filterAssociations(sort, searchWord)
+      return res.status(200).json(toResponseDTO(result, 200, 'password'))
+    } catch (err) {
       return res.status(500).json({
-        error: error,
+        error: err,
         message: 'An error occurred while searching associations'
-      })
-    }
-  }
-
-  // Méthode pour récupérer les associations triées par la date de création en ordre croissant
-  static async triAssociationsByDateAsc(
-    req: Request,
-    res: Response
-  ): Promise<any | ResponseDTO<AssociationResponse[]>> {
-    try {
-      // Appeler le service pour récupérer les associations triées
-      const sortedAssociations =
-        await AssociationService.triAssociationsByDateAsc()
-
-      const results = this.remapToResponse(sortedAssociations)
-
-      // Retourner les associations triées
-      return res
-        .status(200)
-        .json(toResponseDTO<AssociationResponse[]>(results, 200))
-    } catch (error) {
-      return res.status(500).json({
-        error: error,
-        message: 'An error occured while fetching sorted associations'
-      })
-    }
-  }
-
-  // Méthode pour récupérer les associations triées par la date de création en ordre décroissant
-  static async triAssociationsByDateDesc(
-    req: Request,
-    res: Response
-  ): Promise<any | ResponseDTO<AssociationResponse[]>> {
-    try {
-      // Appeler le service pour récupérer les associations triées
-      const sortedAssociations =
-        await AssociationService.triAssociationsByDateDesc()
-
-      const results = this.remapToResponse(sortedAssociations)
-
-      // Retourner les associations triées
-      return res
-        .status(200)
-        .json(toResponseDTO<AssociationResponse[]>(results, 200))
-    } catch (error) {
-      return res.status(500).json({
-        error: error,
-        message: 'An error occured while fetching sorted associations'
       })
     }
   }
 
   // Helpers
   static remapToResponse(assos: dbAssociation[]): AssociationResponse[] {
+    if (assos.length < 1) return []
     return assos.map(asso => {
       return {
         id: asso.id,

@@ -1,7 +1,7 @@
 import * as cache from 'memory-cache'
 import { log } from '../helpers/logger.helper'
 import { db } from '../helpers/db.helper'
-import { Association, dbAssociation } from '../entities/association.entity'
+import { Association, dbAssociation, dbAssociationJoin } from '../entities/association.entity'
 import { decryptPassword } from '../helpers/password.helper'
 import { createToken } from '../helpers/jwt.helper'
 
@@ -108,31 +108,26 @@ export class AssociationService {
     })
   }
 
-  /**
-   * Trier les associations par la date de création en ordre croissant
-   * @returns une liste d'associations triées
-   */
-  static async triAssociationsByDateAsc() {
-    // Récupérer les associations triées par la date de création en ordre ascendant
+  static async filterAssociations(sort: 'asc' | 'desc', keyword: string = ''): Promise<any> {
     const associations = await this.associationRepo.findMany({
-      orderBy: {
-        createdAt: 'asc'
+      where: {
+        OR: [
+          {name: {
+              contains: '%' + keyword + '%'
+            }},
+          {description: {contains: '%' + keyword + '%'}}
+        ]
+      },
+      orderBy: [
+        {
+          createdAt: sort
+        }
+      ],
+      include: {
+        region: true
       }
     })
-    return associations
-  }
 
-  /**
-   * Trier les associations par la date de création en ordre décroissant
-   * @returns une liste d'associations triées
-   */
-  static async triAssociationsByDateDesc() {
-    // Récupérer les associations triées par la date de création en ordre décroissant
-    const associations = await this.associationRepo.findMany({
-      orderBy: {
-        createdAt: 'desc'
-      }
-    })
     return associations
   }
 }
