@@ -26,10 +26,11 @@ model users {
   userRole   userRole @relation(fields: [userRoleId], references: [id])
   userRoleId Int
 
-  membreAsso   membreAsso[]
-  vuesPost     vuesPost[]
-  postReaction postReaction[]
-  postComment Comment[]
+  membreAsso            membreAsso[]
+  vuesPost              vuesPost[]
+  postReaction          postReaction[]
+  postComment           Comment[]
+  userFollowAssociation userFollowAssociation[]
 }
 
 model userRole {
@@ -61,32 +62,33 @@ model associations {
   id          Int      @id @default(autoincrement())
   rna         String   @db.VarChar(100)
   name        String   @db.VarChar(100)
-  email       String @db.VarChar(100)
-  password String @db.VarChar(100)
+  email       String   @db.VarChar(100)
+  password    String   @db.VarChar(100)
   description String?
   region      region   @relation(fields: [regionId], references: [id])
   regionId    Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  membreAsso membreAsso[]
-  post post[]
+  membreAsso            membreAsso[]
+  post                  post[]
+  userFollowAssociation userFollowAssociation[]
 }
 
 model post {
-  id         Int      @id @default(autoincrement())
+  id         Int          @id @default(autoincrement())
   title      String
   content    String
-  createdAt  DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  typePost   typePost @relation(fields: [typePostId], references: [id])
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  typePost   typePost     @relation(fields: [typePostId], references: [id])
   typePostId Int
-  author associations @relation(fields: [authorId], references: [id])
-  authorId Int
+  author     associations @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId   Int
 
   vuesPost     vuesPost[]
   postReaction postReaction[]
-  postComment Comment[]
+  postComment  Comment[]
 }
 
 model typePost {
@@ -116,20 +118,27 @@ model postReaction {
 }
 
 model Comment {
-  id           Int       @id @default(autoincrement())
-  content      String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user       users      @relation(fields: [userId], references: [id])
-  userId       Int
+  user   users @relation(fields: [userId], references: [id])
+  userId Int
 
-  post         post      @relation(fields: [postId], references: [id])
-  postId       Int
+  post   post @relation(fields: [postId], references: [id])
+  postId Int
 
-
-  parent       Comment?  @relation("ChildComments", fields: [parentId], references: [id])
-  parentId     Int?
+  parent   Comment? @relation("ChildComments", fields: [parentId], references: [id])
+  parentId Int?
 
   childComments Comment[] @relation("ChildComments")
+}
+
+model userFollowAssociation {
+  id            Int          @id @default(autoincrement())
+  user          users        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int
+  association   associations @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  associationId Int
 }

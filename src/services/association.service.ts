@@ -3,6 +3,7 @@ import { log } from '../helpers/logger.helper'
 import { db } from '../helpers/db.helper'
 import {
   Association,
+  associationRegisterInput,
   dbAssociation,
   dbAssociationJoin
 } from '../entities/association.entity'
@@ -34,7 +35,7 @@ export class AssociationService {
    * @param association les informations de l'association à créer
    * @returns un token JWT
    */
-  static async createAssociation(association: Association) {
+  static async createAssociation(association: associationRegisterInput) {
     const result = await this.associationRepo.create({
       data: {
         rna: association.rna,

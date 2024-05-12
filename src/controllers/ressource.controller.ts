@@ -69,7 +69,10 @@ export class RessourceController {
       }
 
       // Check if user is admin or author
-      if (connectedUser.entity == 'isassociation' && connectedUser.id !== ressource.authorId) {
+      if (
+        connectedUser.entity == 'isassociation' &&
+        connectedUser.id !== ressource.authorId
+      ) {
         return res.status(400).json({
           error: 404,
           message: 'You do not have the rights to execute this operation'
@@ -144,7 +147,8 @@ export class RessourceController {
     try {
       // Recherche des ressources correspondant au mot-clé
       const ressources = await RessourceService.searchRessources(
-        input, searchWord
+        input,
+        searchWord
       )
 
       // const results = this.remapToResponse(ressources)
@@ -158,61 +162,16 @@ export class RessourceController {
     }
   }
 
-  // Méthode pour récupérer les ressources triées par la date de création en ordre croissant
-  static async triRessourcesByDateAsc(
-    req: Request,
-    res: Response
-  ): Promise<any | ResponseDTO<RessourceResponse[]>> {
-    try {
-      // Appeler le service pour récupérer les ressources triées
-      const sortedRessources = await RessourceService.triRessourcesByDateAsc()
-
-      // const results = this.remapToResponse(sortedRessources)
-
-      // Retourner les ressources triées
-      return res
-        .status(200)
-        .json(toResponseDTO<dbRessource[]>(sortedRessources, 200))
-    } catch (error) {
-      return res.status(500).json({
-        error: error,
-        message: 'An error occured while fetching sorted ressources'
-      })
-    }
-  }
-
-  // Méthode pour récupérer les ressources triées par la date de création en ordre décroissant
-  static async triRessourcesByDateDesc(
-    req: Request,
-    res: Response
-  ): Promise<any | ResponseDTO<RessourceResponse[]>> {
-    try {
-      // Appeler le service pour récupérer les ressources triées
-      const sortedRessources = await RessourceService.triRessourcesByDateDesc()
-
-      // const results = this.remapToResponse(sortedRessources)
-
-      // Retourner les ressources triées
-      return res
-        .status(200)
-        .json(toResponseDTO<dbRessource[]>(sortedRessources, 200))
-    } catch (error) {
-      return res.status(500).json({
-        error: error,
-        message: 'An error occured while fetching sorted ressources'
-      })
-    }
-  }
-
   static async createRessource(
     req: Request<{}, {}, ressourceCreateInput>,
     res: Response
   ): Promise<any | ResponseDTO<SingleMessageDTO>> {
     const asso = res.locals.user
-    if (!asso) return res.status(401).json({
-      error: 401,
-      message: 'Not authorized'
-    })
+    if (!asso)
+      return res.status(401).json({
+        error: 401,
+        message: 'Not authorized'
+      })
 
     try {
       const input = req.body
@@ -237,18 +196,4 @@ export class RessourceController {
       })
     }
   }
-
-  // static remapToResponse(ressource:dbRessource[]):RessourceResponse[]{
-  //   return ressource.map(ressource =>{
-  //     return{
-  //       id: ressource.id,
-  //       title: ressource.title,
-  //       content: ressource.content,
-  //       createdAt: ressource.createdAt,
-  //       updatedAt: ressource.updatedAt,
-  //       associationId: ressource.associationId,
-  //       typePostId: ressource.typePostId
-  //     }
-  //   })
-  // }
 }

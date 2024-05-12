@@ -124,7 +124,10 @@ export class AssociationController {
       }
 
       const connectedUser = res.locals.user
-      if (connectedUser.entity == 'isassociation' && connectedUser.id !== associationId) {
+      if (
+        connectedUser.entity == 'isassociation' &&
+        connectedUser.id !== associationId
+      ) {
         return res.status(400).json({
           error: 404,
           message: 'You do not have the rights to execute this operation'

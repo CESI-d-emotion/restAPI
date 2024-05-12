@@ -1,7 +1,11 @@
 import * as cache from 'memory-cache'
 import { log } from '../helpers/logger.helper'
 import { db } from '../helpers/db.helper'
-import { IFilterSearchRessourceRequest, Ressource, ressourceCreateInput } from '../entities/ressource.entity'
+import {
+  IFilterSearchRessourceRequest,
+  Ressource,
+  ressourceCreateInput
+} from '../entities/ressource.entity'
 import { createToken } from '../helpers/jwt.helper'
 
 export class RessourceService {
@@ -39,7 +43,10 @@ export class RessourceService {
    * @param ressource les informations de la ressource à créer
    * @returns un token JWT
    */
-  static async createRessource(ressource: ressourceCreateInput, authorId: number) {
+  static async createRessource(
+    ressource: ressourceCreateInput,
+    authorId: number
+  ) {
     const result = await this.ressourceRepo.create({
       data: {
         title: ressource.title,
@@ -85,7 +92,10 @@ export class RessourceService {
    * @param keyword le mot-clé de recherche
    * @returns une liste de ressources correspondant au mot-clé
    */
-  static async searchRessources(input: IFilterSearchRessourceRequest, searchWord: string) {
+  static async searchRessources(
+    input: IFilterSearchRessourceRequest,
+    searchWord: string
+  ) {
     // Recherche les ressources dont le titre ou le content correspond au mot-clé
     const queryArgs = {
       where: {
@@ -94,15 +104,19 @@ export class RessourceService {
             title: {
               contains: '%' + searchWord + '%'
             },
-            ...(input.authorId && input.authorId !== 0 && {authorId: input.authorId}),
-            ...(input.typePostId && input.typePostId !== 0 && {typePostId: input.typePostId}),
+            ...(input.authorId &&
+              input.authorId !== 0 && { authorId: input.authorId }),
+            ...(input.typePostId &&
+              input.typePostId !== 0 && { typePostId: input.typePostId })
           },
           {
             content: {
               contains: '%' + searchWord + '%'
             },
-            ...(input.authorId && input.authorId !== 0 && {authorId: input.authorId}),
-            ...(input.typePostId && input.typePostId !== 0 && {typePostId: input.typePostId}),
+            ...(input.authorId &&
+              input.authorId !== 0 && { authorId: input.authorId }),
+            ...(input.typePostId &&
+              input.typePostId !== 0 && { typePostId: input.typePostId })
           }
         ]
       },
@@ -116,34 +130,6 @@ export class RessourceService {
     console.log(queryArgs)
 
     const ressources = await this.ressourceRepo.findMany(queryArgs)
-    return ressources
-  }
-
-  /**
-   * Trier les ressources par la date de création en ordre croissant
-   * @returns une liste de ressources triées
-   */
-  static async triRessourcesByDateAsc() {
-    // Récupérer les ressources triées par la date de création en ordre croissant
-    const ressources = await this.ressourceRepo.findMany({
-      orderBy: {
-        createdAt: 'asc'
-      }
-    })
-    return ressources
-  }
-
-  /**
-   * Trier les ressouces par la date de création en ordre décroissant
-   * @returns une liste de ressources triées
-   */
-  static async triRessourcesByDateDesc() {
-    // Récupérer les ressources triées par la date de création en ordre décroissant
-    const ressources = await this.ressourceRepo.findMany({
-      orderBy: {
-        createdAt: 'desc'
-      }
-    })
     return ressources
   }
 }

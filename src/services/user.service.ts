@@ -1,12 +1,13 @@
 import * as cache from 'memory-cache'
 import { log } from '../helpers/logger.helper'
 import { db } from '../helpers/db.helper'
-import { User } from '../entities/user.entity'
+import { User, userSignupInput } from '../entities/user.entity'
 import { createToken } from '../helpers/jwt.helper'
 import { decryptPassword } from '../helpers/password.helper'
 
 export class UserService {
   private static userRepo = db.users
+  private static userFollowRepo = db.userFollowAssociation
 
   static async getUsers() {
     const data = cache.get('data')
@@ -22,7 +23,7 @@ export class UserService {
     }
   }
 
-  static async createUser(user: User) {
+  static async createUser(user: userSignupInput) {
     const result = await this.userRepo.create({
       data: {
         firstName: user.firstName,
@@ -62,5 +63,30 @@ export class UserService {
     return this.userRepo.findUnique({
       where: { id: userId }
     })
+  }
+
+  static async followAction(associationId: number, userId: number) {
+    const checkIfExists = await this.userFollowRepo.findFirst({
+      where: {
+        associationId,
+        userId
+      }
+    })
+    if (!checkIfExists) {
+      // Create follow
+      await this.userFollowRepo.create({
+        data: {
+          user: { connect: { id: userId } },
+          association: {connect: { id: associationId } },
+        }
+      })
+    } else {
+      // Delete follow
+      await this.userFollowRepo.delete({
+        where: {
+          id: checkIfExists.id
+        }
+      })
+    }
   }
 }

@@ -3,7 +3,6 @@ export class User {
   public readonly lastName: string
   public readonly email: string
   public password: string
-  public readonly passwordConfirmation: string
   public readonly regionId: number
   public readonly userRoleId: number
 
@@ -12,7 +11,6 @@ export class User {
     lastName: string,
     email: string,
     password: string,
-    passwordConfirmation: string,
     regionId: number,
     userRoleId: number
   ) {
@@ -20,7 +18,6 @@ export class User {
     this.lastName = lastName
     this.email = email
     this.password = password
-    this.passwordConfirmation = passwordConfirmation
     this.regionId = regionId
     this.userRoleId = userRoleId
   }
@@ -29,4 +26,14 @@ export class User {
 export interface UserLoginInput {
   email: string
   password: string
+}
+
+export interface userSignupInput {
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+  passwordConfirmation: string
+  regionId: number
+  userRoleId: number
 }

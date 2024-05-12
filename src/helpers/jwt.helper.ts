@@ -4,10 +4,18 @@ import { log } from './logger.helper'
 
 export const maxAge = 3 * 24 * 60 * 60
 
-export async function createToken(id: number, userEmail: string, entity: 'isuser' | 'isassociation') {
-  const token = jwt.sign({ id, userEmail, entity }, process.env.JWT_SECRET as string, {
-    expiresIn: maxAge
-  })
+export async function createToken(
+  id: number,
+  userEmail: string,
+  entity: 'isuser' | 'isassociation'
+) {
+  const token = jwt.sign(
+    { id, userEmail, entity },
+    process.env.JWT_SECRET as string,
+    {
+      expiresIn: maxAge
+    }
+  )
   return token
 }
 

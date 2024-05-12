@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { UserResponse } from '../dto/user.dto'
 import { UserService } from '../services/user.service'
-import { User, UserLoginInput } from '../entities/user.entity'
+import { User, UserLoginInput, userSignupInput } from '../entities/user.entity'
 import { encryptPassword } from '../helpers/password.helper'
 import { maxAge } from '../helpers/jwt.helper'
 import {
@@ -9,6 +9,7 @@ import {
   SingleMessageDTO,
   toResponseDTO
 } from '../dto/response.dto'
+import { AssociationService } from '../services/association.service'
 
 export class UserController {
   static async getUsers(
@@ -26,7 +27,7 @@ export class UserController {
   }
 
   static async signup(
-    req: Request<{}, {}, User>,
+    req: Request<{}, {}, userSignupInput>,
     res: Response
   ): Promise<any | ResponseDTO<SingleMessageDTO>> {
     try {
@@ -140,6 +141,37 @@ export class UserController {
     } catch (error) {
       return res.status(500).json({
         error: error
+      })
+    }
+  }
+
+  static async followAction(req: Request, res: Response) {
+    const assoId: number = parseInt(req.params.assoId)
+    const connectedUser = res.locals.user
+
+    try {
+      // Check if asso exists
+      const association = await AssociationService.getAssociationById(assoId)
+      if (!association) {
+        return res.status(401).json({
+          error: 401,
+          message: 'Association not found'
+        })
+      }
+
+      // Check if user exists
+      const user = await UserService.getUserById(connectedUser.id)
+      if (!user) {
+        return res.status(401).json({
+          error: 401,
+          message: 'Utilisateur non trouvé'
+        })
+      }
+      await UserService.followAction(association.id, user.id)
+      return res.status(200).json(toResponseDTO("Follow action OK", 200))
+    } catch (err) {
+      return res.status(500).json({
+        error: err
       })
     }
   }

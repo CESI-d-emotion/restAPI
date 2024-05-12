@@ -4,7 +4,6 @@ export class Association {
   public readonly email: string
   public readonly description: string | null
   public password: string
-  public passwordConfirmation: string
   public regionId: number
 
   constructor(
@@ -12,7 +11,6 @@ export class Association {
     name: string,
     email: string,
     password: string,
-    passwordConfirmation: string,
     regionId: number,
     description: string | null = null
   ) {
@@ -21,7 +19,6 @@ export class Association {
     this.email = email
     this.description = description
     this.password = password
-    this.passwordConfirmation = passwordConfirmation
     this.regionId = regionId
   }
 }
