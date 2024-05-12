@@ -1,7 +1,11 @@
 import * as cache from 'memory-cache'
 import { log } from '../helpers/logger.helper'
 import { db } from '../helpers/db.helper'
-import { Association, dbAssociation, dbAssociationJoin } from '../entities/association.entity'
+import {
+  Association,
+  dbAssociation,
+  dbAssociationJoin
+} from '../entities/association.entity'
 import { decryptPassword } from '../helpers/password.helper'
 import { createToken } from '../helpers/jwt.helper'
 
@@ -43,7 +47,7 @@ export class AssociationService {
         region: { connect: { id: association.regionId } }
       }
     })
-    return createToken(result.id, result.email)
+    return createToken(result.id, result.email, 'isassociation')
   }
 
   /**
@@ -65,7 +69,7 @@ export class AssociationService {
     if (!matchPass) {
       return null
     }
-    return createToken(association.id, association.email)
+    return createToken(association.id, association.email, 'isassociation')
   }
 
   /**
@@ -108,14 +112,19 @@ export class AssociationService {
     })
   }
 
-  static async filterAssociations(sort: 'asc' | 'desc', keyword: string = ''): Promise<any> {
+  static async filterAssociations(
+    sort: 'asc' | 'desc',
+    keyword: string = ''
+  ): Promise<any> {
     const associations = await this.associationRepo.findMany({
       where: {
         OR: [
-          {name: {
+          {
+            name: {
               contains: '%' + keyword + '%'
-            }},
-          {description: {contains: '%' + keyword + '%'}}
+            }
+          },
+          { description: { contains: '%' + keyword + '%' } }
         ]
       },
       orderBy: [

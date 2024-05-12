@@ -9,6 +9,10 @@ import { AssociationRouter } from './routes/association.route'
 import { RessourceRouter } from './routes/ressource.route'
 
 // const app: Server = new Server([new UserRouter(), new HealthCheckRouter()])
-const app: Server = new Server([new UserRouter(), new HealthCheckRouter(),
-  new AssociationRouter(), new RessourceRouter()])
+const app: Server = new Server([
+  new UserRouter(),
+  new HealthCheckRouter(),
+  new AssociationRouter(),
+  new RessourceRouter()
+])
 app.listen()

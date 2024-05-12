@@ -3,12 +3,16 @@ export interface ResponseDTO<T> {
   data: T
 }
 
-export function toResponseDTO<T>(obj: T | T[] | string, code: number, ...omitFields: (keyof T)[]): ResponseDTO<Omit<T, typeof omitFields[number]> | string> {
+export function toResponseDTO<T>(
+  obj: T | T[] | string,
+  code: number,
+  ...omitFields: (keyof T)[]
+): ResponseDTO<Omit<T, (typeof omitFields)[number]> | string> {
   if (typeof obj === 'string') {
     return {
       code,
       data: obj
-    } as ResponseDTO<string>;
+    } as ResponseDTO<string>
   }
   const mapFunction = (entity: T): Partial<T> => {
     const cleanedObj: Partial<T> = {}
@@ -27,9 +31,9 @@ export function toResponseDTO<T>(obj: T | T[] | string, code: number, ...omitFie
     cleanedData = mapFunction(obj)
   }
 
-  const mapObj: ResponseDTO<Omit<T, typeof omitFields[number]>> = {
+  const mapObj: ResponseDTO<Omit<T, (typeof omitFields)[number]>> = {
     code,
-    data: cleanedData as Omit<T, typeof omitFields[number]>
+    data: cleanedData as Omit<T, (typeof omitFields)[number]>
   }
   return mapObj
 }

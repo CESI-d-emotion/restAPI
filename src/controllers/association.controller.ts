@@ -25,9 +25,7 @@ export class AssociationController {
   ): Promise<any | ResponseDTO<AssociationResponse>> {
     try {
       const result = await AssociationService.getAssociation()
-      return res
-        .status(200)
-        .json(toResponseDTO(result, 200, 'password'))
+      return res.status(200).json(toResponseDTO(result, 200, 'password'))
     } catch (error) {
       return res.status(500).json({
         error: error
@@ -57,15 +55,10 @@ export class AssociationController {
       // Créer l'association
       const result = await AssociationService.createAssociation(input)
       // Définir le cookie JWT
-      res.cookie('jwt', result, { httpOnly: true,maxAge: maxAge * 1000  })
+      res.cookie('jwt', result, { httpOnly: true, maxAge: maxAge * 1000 })
       return res
         .status(200)
-        .json(
-          toResponseDTO(
-            'Association created successfully',
-            200
-          )
-        )
+        .json(toResponseDTO('Association created successfully', 200))
     } catch (error) {
       return res.status(500).json({
         error: error,
@@ -130,24 +123,20 @@ export class AssociationController {
         })
       }
 
-      // TODO: User admin peut delete
       const connectedUser = res.locals.user
-      const user = await UserService.getUserById(connectedUser.id)
-
-      // Verification si pas de user && que l'id présenté ne correspond pas au token
-      if (!user && connectedUser.id !== associationId) {
+      if (connectedUser.entity == 'isassociation' && connectedUser.id !== associationId) {
         return res.status(400).json({
           error: 404,
           message: 'You do not have the rights to execute this operation'
         })
-      }
-      // Si le token ne correspond pas mais qu'un user est connecté
-      // Vérifie si le user a le role admin
-      if (user.userRoleId !== 1) {
-        return res.status(401).json({
-          error: 404,
-          message: 'You do not have permission to execute this operation'
-        })
+      } else if (connectedUser.entity == 'isuser') {
+        const user = await UserService.getUserById(connectedUser.id)
+        if (!user || user.userRoleId !== 1) {
+          return res.status(400).json({
+            error: 404,
+            message: 'You do not have the rights to execute this operation'
+          })
+        }
       }
 
       // Supprimer l'association
@@ -202,14 +191,20 @@ export class AssociationController {
   }
 
   // New asso search
-  static async filterSearchAsso(req: Request<{}, {}, IFilterSearchAssoRequest>, res: Response): Promise<any | ResponseDTO<AssociationResponse[] | []>> {
+  static async filterSearchAsso(
+    req: Request<{}, {}, IFilterSearchAssoRequest>,
+    res: Response
+  ): Promise<any | ResponseDTO<AssociationResponse[] | []>> {
     // Recupere les filtres / options
     const { sort, keyword } = req.body
 
     const searchWord = keyword ? keyword : ''
 
     try {
-      const result = await AssociationService.filterAssociations(sort, searchWord)
+      const result = await AssociationService.filterAssociations(
+        sort,
+        searchWord
+      )
       return res.status(200).json(toResponseDTO(result, 200, 'password'))
     } catch (err) {
       return res.status(500).json({
@@ -231,7 +226,7 @@ export class AssociationController {
         description: asso.description,
         regionId: asso.regionId,
         createdAt: asso.createdAt,
-        updatedAt: asso.updatedAt,
+        updatedAt: asso.updatedAt
       }
     })
   }
@@ -267,7 +262,4 @@ export class AssociationController {
   //     }];
   //   }, []);
   // }
-
-
-
 }

@@ -4,8 +4,7 @@ export class Association {
   public readonly email: string
   public readonly description: string | null
   public password: string
-  public readonly createdAt: Date
-  public readonly updatedAt: Date
+  public passwordConfirmation: string
   public regionId: number
 
   constructor(
@@ -13,8 +12,7 @@ export class Association {
     name: string,
     email: string,
     password: string,
-    createdAt: Date = new Date(),
-    updatedAt: Date = new Date(),
+    passwordConfirmation: string,
     regionId: number,
     description: string | null = null
   ) {
@@ -23,8 +21,7 @@ export class Association {
     this.email = email
     this.description = description
     this.password = password
-    this.createdAt = createdAt
-    this.updatedAt = updatedAt
+    this.passwordConfirmation = passwordConfirmation
     this.regionId = regionId
   }
 }
@@ -66,11 +63,11 @@ export interface dbAssociationJoin {
   description: string | null
   password: string
   createdAt: Date
-  updatedAt: Date,
+  updatedAt: Date
   regionId: number
   region: {
-    id: number,
-    name: string,
+    id: number
+    name: string
     nutsCode: string
   }
 }

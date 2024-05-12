@@ -1,7 +1,7 @@
 import { IRouter } from '../interfaces/router.interface'
 import { Router } from 'express'
 import { RessourceController } from '../controllers/ressource.controller'
-import { requireAssociation, requireRessource } from '../helpers/jwt.helper'
+import { requireAssociation, requireRessource, requireUser } from '../helpers/jwt.helper'
 import { AssociationController } from '../controllers/association.controller'
 
 export class RessourceRouter implements IRouter {
@@ -18,27 +18,28 @@ export class RessourceRouter implements IRouter {
 
     // GET : Route pour récupérer une ressource par ID
     this.router.get(
-      `${this.path}/searchById/:ressourceId`,
+      `${this.path}/:ressourceId`,
       RessourceController.getRessourceById
     )
 
     // GET : Route pour rechercher des ressources par titre ou content
-    this.router.get(
-      `${this.path}/search/:keyword`,
+    this.router.post(
+      `${this.path}/search`,
       RessourceController.searchRessource
     )
 
     // DELETE : Route pour supprimer une ressource par ID
     this.router.delete(
       `${this.path}/:ressourceId`,
-      requireAssociation,
+      requireUser,
       RessourceController.deleteRessourceById
     )
 
     // POST : Route pour créer une ressource
-    this.router.post(this.path + '/createPost',
-     requireAssociation,
-     RessourceController.createRessource)
-
+    this.router.post(
+      this.path + '/createPost',
+      requireUser,
+      RessourceController.createRessource
+    )
   }
 }

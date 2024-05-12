@@ -33,7 +33,7 @@ export class UserService {
         userRole: { connect: { id: user.userRoleId } }
       }
     })
-    return createToken(result.id, result.email)
+    return createToken(result.id, result.email, 'isuser')
   }
 
   static async login(email: string, password: string) {
@@ -49,7 +49,7 @@ export class UserService {
     if (!matchPass) {
       return null
     }
-    return createToken(user.id, user.email)
+    return createToken(user.id, user.email, 'isuser')
   }
 
   static async deleteUserById(userId: number): Promise<void> {
