@@ -13,6 +13,7 @@ export class UserRouter implements IRouter {
 
   private initializeRoutes(): void {
     // GET
+    this.router.get(this.path + '/whoami', requireUser, UserController.whoami)
     this.router.get(this.path, UserController.getUsers)
     this.router.delete(
       `${this.path}/:userId`,

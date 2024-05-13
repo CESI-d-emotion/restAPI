@@ -71,6 +71,8 @@ export class UserService {
     return this.userRepo.findUnique({
       where: { id: userId },
       include: {
+        region: true,
+        userRole: true,
         userFollowAssociation: {
           include: {
             association: {

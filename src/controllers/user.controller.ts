@@ -178,4 +178,30 @@ export class UserController {
       })
     }
   }
+
+  static async whoami(req: Request, res: Response) {
+    const connectedUser = res.locals.user
+    if (!connectedUser) {
+      res.status(401).json({
+        error: 401,
+        message: 'Utilisateur whoami'
+      })
+    }
+
+    try {
+      const user = await UserService.getUserById(connectedUser.id)
+      if (!user) {
+        res.status(404).json({
+          code: 404,
+          message: 'user not found'
+        })
+      }
+      res.status(200).json(toResponseDTO<User>(user, 200, 'password'))
+    } catch (e) {
+      res.status(400).json({
+        error: 400,
+        message: 'Problem happened'
+      })
+    }
+  }
 }
