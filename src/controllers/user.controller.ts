@@ -43,19 +43,18 @@ export class UserController {
       input.password = await encryptPassword(input.password)
 
       const result = await UserService.createUser(input)
-      res.cookie('jwt', result, { httpOnly: true, maxAge: maxAge * 1000 })
-      return res
-        .status(200)
-        .json(
-          toResponseDTO(
-            {
-              token: result,
-              identity: 'isuser',
-              message: 'User created successfully'
-            },
-            200
-          )
+      res.cookie('jwt', result.token, { httpOnly: true, maxAge: maxAge * 1000 })
+      return res.status(200).json(
+        toResponseDTO(
+          {
+            token: result.token,
+            identity: 'isuser',
+            role: result.role,
+            message: 'User created successfully'
+          },
+          200
         )
+      )
     } catch (error) {
       return res.status(500).json({
         error: error,
@@ -77,12 +76,17 @@ export class UserController {
           message: 'Incorrect email or password'
         })
       }
-      res.cookie('jwt', result, { httpOnly: true, maxAge: maxAge * 1000 })
+      res.cookie('jwt', result.token, { httpOnly: true, maxAge: maxAge * 1000 })
       res
         .status(200)
         .json(
           toResponseDTO(
-            { token: result, identity: 'isuser', message: 'OK' },
+            {
+              token: result.token,
+              identity: 'isuser',
+              role: result.role,
+              message: 'OK'
+            },
             200
           )
         )

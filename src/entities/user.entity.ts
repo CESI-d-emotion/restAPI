@@ -21,8 +21,6 @@ export class User {
     this.regionId = regionId
     this.userRoleId = userRoleId
   }
-
-
 }
 
 export interface UserLoginInput {
