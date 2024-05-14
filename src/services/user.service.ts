@@ -39,7 +39,7 @@ export class UserService {
         email: user.email,
         password: user.password,
         region: { connect: { id: user.regionId } },
-        userRole: { connect: { id: user.userRoleId } }
+        userRole: { connect: { id: user.userRoleId ? user.userRoleId : 4 } }
       }
     })
     return createToken(result.id, result.email, 'isuser')
@@ -112,7 +112,12 @@ export class UserService {
     }
   }
 
-  static async updateUser(userId: number, firstName: string, lastName: string, email: string) {
+  static async updateUser(
+    userId: number,
+    firstName: string,
+    lastName: string,
+    email: string
+  ) {
     return this.userRepo.update({
       where: { id: userId },
       data: {

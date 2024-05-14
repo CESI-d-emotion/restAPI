@@ -31,6 +31,10 @@ export class UserRouter implements IRouter {
     this.router.post(this.path + '/login', UserController.login)
 
     // UPDATE
-    this.router.post(this.path + '/update', requireUser, UserController.updateProfile)
+    this.router.post(
+      this.path + '/update',
+      requireUser,
+      UserController.updateProfile
+    )
   }
 }

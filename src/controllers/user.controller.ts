@@ -48,7 +48,11 @@ export class UserController {
         .status(200)
         .json(
           toResponseDTO(
-            { token: result, message: 'User created successfully' },
+            {
+              token: result,
+              identity: 'isuser',
+              message: 'User created successfully'
+            },
             200
           )
         )
@@ -74,7 +78,14 @@ export class UserController {
         })
       }
       res.cookie('jwt', result, { httpOnly: true, maxAge: maxAge * 1000 })
-      res.status(200).json(toResponseDTO({ token: result, message: 'OK' }, 200))
+      res
+        .status(200)
+        .json(
+          toResponseDTO(
+            { token: result, identity: 'isuser', message: 'OK' },
+            200
+          )
+        )
     } catch (error) {
       return res.status(500).json({
         error: error,
@@ -206,20 +217,27 @@ export class UserController {
     }
   }
 
-  static async updateProfile(req: Request<{}, {}, {firstName: string, lastName: string, email: string}>, res: Response) {
+  static async updateProfile(
+    req: Request<
+      {},
+      {},
+      { firstName: string; lastName: string; email: string }
+    >,
+    res: Response
+  ) {
     const connectedUser = res.locals.user
     if (!connectedUser) {
-      return res.status(401).json(toResponseDTO("You must be connected", 401))
+      return res.status(401).json(toResponseDTO('You must be connected', 401))
     }
 
     try {
-      const {firstName, lastName, email} = req.body
+      const { firstName, lastName, email } = req.body
       const user = await UserService.getUserById(connectedUser.id)
       if (!user) {
-        return res.status(404).json(toResponseDTO("User not found", 404))
+        return res.status(404).json(toResponseDTO('User not found', 404))
       }
       await UserService.updateUser(user.id, firstName, lastName, email)
-      return res.status(200).json(toResponseDTO("User updated", 200))
+      return res.status(200).json(toResponseDTO('User updated', 200))
     } catch (err) {
       return res.status(500).json(toResponseDTO(err, 500))
     }

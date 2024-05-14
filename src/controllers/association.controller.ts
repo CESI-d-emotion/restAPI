@@ -60,7 +60,11 @@ export class AssociationController {
         .status(200)
         .json(
           toResponseDTO(
-            { token: result, message: 'Association created successfully' },
+            {
+              token: result,
+              identity: 'isassociation',
+              message: 'Association created successfully'
+            },
             200
           )
         )
@@ -95,7 +99,11 @@ export class AssociationController {
         .status(200)
         .json(
           toResponseDTO(
-            { token: result, message: 'Association logged in!' },
+            {
+              token: result,
+              identity: 'isassociation',
+              message: 'Association logged in!'
+            },
             200
           )
         )

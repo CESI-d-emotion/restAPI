@@ -20,3 +20,5 @@ const app: Server = new Server([
   new CommentRouter()
 ])
 app.listen()
+
+export default app

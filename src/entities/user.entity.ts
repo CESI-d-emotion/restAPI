@@ -21,6 +21,8 @@ export class User {
     this.regionId = regionId
     this.userRoleId = userRoleId
   }
+
+
 }
 
 export interface UserLoginInput {
@@ -35,5 +37,5 @@ export interface userSignupInput {
   password: string
   passwordConfirmation: string
   regionId: number
-  userRoleId: number
+  userRoleId?: number
 }
