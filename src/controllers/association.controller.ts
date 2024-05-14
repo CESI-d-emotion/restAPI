@@ -246,35 +246,29 @@ export class AssociationController {
     })
   }
 
-  // static remapToResponse(assos: dbAssociation[]): AssociationResponse[] {
-  //   const remappedAssos: AssociationResponse[] = [];
-  //   for (const asso of assos) {
-  //     remappedAssos.push({
-  //       id: asso.id,
-  //       rna: asso.rna,
-  //       name: asso.name,
-  //       email: asso.email,
-  //       description: asso.description,
-  //       regionId: asso.regionId,
-  //       createdAt: asso.createdAt,
-  //       updatedAt: asso.updatedAt,
-  //     });
-  //   }
-  //   return remappedAssos;
-  // }
+  static async whoami(req: Request, res: Response) {
+    const connectedUser = res.locals.user
+    if (!connectedUser) {
+      return res.status(401).json({
+        error: 401,
+        message: 'You are not connected'
+      })
+    }
 
-  // static remapToResponse(assos: dbAssociation[]): AssociationResponse[] {
-  //   return assos.reduce<AssociationResponse[]>((remappedAssos, asso) => {
-  //     return [...remappedAssos, {
-  //       id: asso.id,
-  //       rna: asso.rna,
-  //       name: asso.name,
-  //       email: asso.email,
-  //       description: asso.description,
-  //       regionId: asso.regionId,
-  //       createdAt: asso.createdAt,
-  //       updatedAt: asso.updatedAt,
-  //     }];
-  //   }, []);
-  // }
+    try {
+      const asso = await AssociationService.getAssociationById(connectedUser.id)
+      if (!asso) {
+        return res.status(401).json({
+          error: 401,
+          message: 'Association not found'
+        })
+      }
+      return res.status(200).json(toResponseDTO(asso, 200, 'password'))
+    } catch (err) {
+      return res.status(500).json({
+        error: 500,
+        message: err
+      })
+    }
+  }
 }
