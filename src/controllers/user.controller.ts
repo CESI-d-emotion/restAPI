@@ -77,19 +77,17 @@ export class UserController {
         })
       }
       res.cookie('jwt', result.token, { httpOnly: true, maxAge: maxAge * 1000 })
-      res
-        .status(200)
-        .json(
-          toResponseDTO(
-            {
-              token: result.token,
-              identity: 'isuser',
-              role: result.role,
-              message: 'OK'
-            },
-            200
-          )
+      res.status(200).json(
+        toResponseDTO(
+          {
+            token: result.token,
+            identity: 'isuser',
+            role: result.role,
+            message: 'OK'
+          },
+          200
         )
+      )
     } catch (error) {
       return res.status(500).json({
         error: error,
