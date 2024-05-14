@@ -10,6 +10,7 @@ import {
   toResponseDTO
 } from '../dto/response.dto'
 import { AssociationService } from '../services/association.service'
+import test from 'node:test'
 
 export class UserController {
   static async getUsers(
@@ -182,7 +183,7 @@ export class UserController {
   static async whoami(req: Request, res: Response) {
     const connectedUser = res.locals.user
     if (!connectedUser) {
-      res.status(401).json({
+      return res.status(401).json({
         error: 401,
         message: 'Utilisateur whoami'
       })
@@ -191,17 +192,36 @@ export class UserController {
     try {
       const user = await UserService.getUserById(connectedUser.id)
       if (!user) {
-        res.status(404).json({
+        return res.status(404).json({
           code: 404,
           message: 'user not found'
         })
       }
-      res.status(200).json(toResponseDTO<User>(user, 200, 'password'))
+      return res.status(200).json(toResponseDTO<User>(user, 200, 'password'))
     } catch (e) {
-      res.status(400).json({
+      return res.status(400).json({
         error: 400,
         message: 'Problem happened'
       })
+    }
+  }
+
+  static async updateProfile(req: Request<{}, {}, {firstName: string, lastName: string, email: string}>, res: Response) {
+    const connectedUser = res.locals.user
+    if (!connectedUser) {
+      return res.status(401).json(toResponseDTO("You must be connected", 401))
+    }
+
+    try {
+      const {firstName, lastName, email} = req.body
+      const user = await UserService.getUserById(connectedUser.id)
+      if (!user) {
+        return res.status(404).json(toResponseDTO("User not found", 404))
+      }
+      await UserService.updateUser(user.id, firstName, lastName, email)
+      return res.status(200).json(toResponseDTO("User updated", 200))
+    } catch (err) {
+      return res.status(500).json(toResponseDTO(err, 500))
     }
   }
 }

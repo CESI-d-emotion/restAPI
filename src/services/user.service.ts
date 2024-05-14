@@ -111,4 +111,15 @@ export class UserService {
       })
     }
   }
+
+  static async updateUser(userId: number, firstName: string, lastName: string, email: string) {
+    return this.userRepo.update({
+      where: { id: userId },
+      data: {
+        firstName,
+        lastName,
+        email
+      }
+    })
+  }
 }

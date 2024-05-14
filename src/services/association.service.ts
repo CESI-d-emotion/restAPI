@@ -90,7 +90,10 @@ export class AssociationService {
    */
   static async getAssociationById(associationId: number): Promise<any> {
     return this.associationRepo.findUnique({
-      where: { id: associationId }
+      where: { id: associationId },
+      include: {
+        post: true
+      }
     })
   }
 
