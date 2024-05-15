@@ -4,7 +4,8 @@ import { db } from '../helpers/db.helper'
 import {
   IFilterSearchRessourceRequest,
   Ressource,
-  ressourceCreateInput
+  ressourceCreateInput,
+  UpdateRessourceInput
 } from '../entities/ressource.entity'
 import { createToken } from '../helpers/jwt.helper'
 
@@ -16,59 +17,50 @@ export class RessourceService {
    * @returns une liste de ressources
    */
   static async getRessource() {
-    const data = cache.get('data')
-    if (data) {
-      log.info('Serving from cache')
-      return data
-    } else {
-      log.info('Serving from db')
-      const ressource = await this.ressourceRepo.findMany({
-        include: {
-          author: {
-            select: {
-              id: true,
-              name: true
-            }
-          },
-          typePost: true,
-          postReaction: {
-            include: {
-              users: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true
-                }
+    return this.ressourceRepo.findMany({
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true
+          }
+        },
+        typePost: true,
+        postReaction: {
+          include: {
+            users: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true
               }
             }
-          },
-          postComment: {
-            include: {
-              childComments: {
-                include: {
-                  user: {
-                    select: {
-                      id: true,
-                      firstName: true,
-                      lastName: true
-                    }
+          }
+        },
+        postComment: {
+          include: {
+            childComments: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true
                   }
                 }
-              },
-              user: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true
-                }
+              }
+            },
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true
               }
             }
           }
         }
-      })
-      cache.put('data', ressource, 6000)
-      return ressource
-    }
+      }
+    })
   }
 
   /**
@@ -105,7 +97,7 @@ export class RessourceService {
    * @param ressourceId l'ID de la ressource à récupérer
    * @returns la ressource correspondante ou null si non trouvée
    */
-  static async getRessourceById(ressourceId: number): Promise<any> {
+  static async getRessourceById(ressourceId: number) {
     return this.ressourceRepo.findUnique({
       where: { id: ressourceId },
       include: {
@@ -217,5 +209,15 @@ export class RessourceService {
 
     const ressources = await this.ressourceRepo.findMany(queryArgs)
     return ressources
+  }
+
+  static async updateRessource(input: UpdateRessourceInput) {
+    return this.ressourceRepo.update({
+      where: { id: input.rid },
+      data: {
+        title: input.title,
+        content: input.content
+      }
+    })
   }
 }

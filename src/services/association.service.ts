@@ -5,7 +5,8 @@ import {
   Association,
   associationRegisterInput,
   dbAssociation,
-  dbAssociationJoin
+  dbAssociationJoin,
+  UpdateAssociationInput
 } from '../entities/association.entity'
 import { decryptPassword } from '../helpers/password.helper'
 import { createToken } from '../helpers/jwt.helper'
@@ -18,16 +19,7 @@ export class AssociationService {
    * @returns Une liste d'associations
    */
   static async getAssociation() {
-    const data = cache.get('data')
-    if (data) {
-      log.info('Serving from cache')
-      return data
-    } else {
-      log.info('Serving from db')
-      const association = await this.associationRepo.findMany()
-      cache.put('data', association, 6000)
-      return association
-    }
+    return this.associationRepo.findMany()
   }
 
   /**
@@ -142,5 +134,16 @@ export class AssociationService {
     })
 
     return associations
+  }
+
+  static async updateAssociation(input: UpdateAssociationInput) {
+    return this.associationRepo.update({
+      where: { id: input.aid },
+      data: {
+        name: input.name,
+        email: input.email,
+        description: input.description
+      }
+    })
   }
 }

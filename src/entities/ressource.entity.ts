@@ -47,3 +47,10 @@ export interface IFilterSearchRessourceRequest {
   typePostId?: number
   authorId?: number
 }
+
+export interface UpdateRessourceInput {
+  rid: number
+  title: string
+  content: string
+  typePostId: number
+}

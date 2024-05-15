@@ -9,7 +9,8 @@ import {
   dbRessource,
   IFilterSearchRessourceRequest,
   Ressource,
-  ressourceCreateInput
+  ressourceCreateInput,
+  UpdateRessourceInput
 } from '../entities/ressource.entity'
 import { RessourceService } from '../services/ressource.service'
 import { AssociationService } from '../services/association.service'
@@ -23,7 +24,7 @@ export class RessourceController {
   ): Promise<any | ResponseDTO<RessourceResponse>> {
     try {
       const result = await RessourceService.getRessource()
-      return res.status(200).json(toResponseDTO<RessourceResponse>(result, 200))
+      return res.status(200).json(toResponseDTO(result, 200))
     } catch (error) {
       return res.status(500).json({
         error: error
@@ -123,7 +124,7 @@ export class RessourceController {
         })
       }
 
-      return res.status(200).json(toResponseDTO<RessourceResponse>(result, 200))
+      return res.status(200).json(toResponseDTO(result, 200))
     } catch (error) {
       return res.status(500).json({
         error: error,
@@ -189,6 +190,48 @@ export class RessourceController {
       return res.status(500).json({
         error: error,
         message: 'An error occured during creation of post'
+      })
+    }
+  }
+
+  static async update(
+    req: Request<{}, {}, UpdateRessourceInput>,
+    res: Response
+  ) {
+    const connectedUser = res.locals.user
+    if (!connectedUser) {
+      return res.status(401).json({
+        error: 401,
+        message: 'Not authorized'
+      })
+    }
+
+    try {
+      const { rid } = req.body
+      const ressource = await RessourceService.getRessourceById(rid)
+      if (!ressource) {
+        return res.status(404).json({
+          error: 404,
+          message: 'Ressource not found'
+        })
+      }
+      if (connectedUser.id !== ressource.authorId) {
+        const user = await UserService.getUserById(connectedUser.id)
+        if (user.userRoleId !== 1) {
+          return res.status(401).json({
+            error: 401,
+            message: 'You do not have the rights'
+          })
+        }
+      }
+
+      const input = req.body
+      const result = await RessourceService.updateRessource(input)
+      return res.status(200).json(toResponseDTO(result, 200))
+    } catch (err) {
+      return res.status(500).json({
+        error: 500,
+        message: err
       })
     }
   }

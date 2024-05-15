@@ -117,7 +117,7 @@ export class UserController {
         }
 
         const user = await UserService.getUserById(userId)
-        console.log("user ", user)
+        console.log('user ', user)
         if (!user) {
           return res.status(404).json({
             message: 'Utilisateur non trouvé'
@@ -237,8 +237,13 @@ export class UserController {
     try {
       const { uid, firstName, lastName, email } = req.body
       const adminCheck = await UserService.getUserById(connectedUser.id)
-      if ((!adminCheck && uid !== connectedUser.id) || adminCheck.userRoleId !== 1) {
-        return res.status(401).json(toResponseDTO("You do not have the rights", 401))
+      if (
+        (!adminCheck && uid !== connectedUser.id) ||
+        adminCheck.userRoleId !== 1
+      ) {
+        return res
+          .status(401)
+          .json(toResponseDTO('You do not have the rights', 401))
       }
       const user = await UserService.getUserById(uid)
       if (!user) {

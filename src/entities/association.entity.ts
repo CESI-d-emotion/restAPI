@@ -68,3 +68,10 @@ export interface dbAssociationJoin {
     nutsCode: string
   }
 }
+
+export interface UpdateAssociationInput {
+  name: string
+  email: string
+  description: string
+  aid: number
+}

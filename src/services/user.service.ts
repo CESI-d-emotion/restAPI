@@ -10,25 +10,15 @@ export class UserService {
   private static userFollowRepo = db.userFollowAssociation
 
   static async getUsers() {
-    const data = cache.get('data')
-    if (data) {
-      log.info('Serving from cache')
-      return data
-    } else {
-      log.info('Serving from db')
-      const users = await this.userRepo.findMany({
-        include: {
-          userFollowAssociation: {
-            select: {
-              associationId: true
-            }
+    return this.userRepo.findMany({
+      include: {
+        userFollowAssociation: {
+          select: {
+            associationId: true
           }
         }
-      })
-
-      cache.put('data', users, 6000)
-      return users
-    }
+      }
+    })
   }
 
   static async createUser(user: userSignupInput) {

@@ -10,7 +10,8 @@ import {
   Association,
   AssociationLoginInput,
   associationRegisterInput,
-  dbAssociation
+  dbAssociation,
+  UpdateAssociationInput
 } from '../entities/association.entity'
 import { encryptPassword } from '../helpers/password.helper'
 import { maxAge } from '../helpers/jwt.helper'
@@ -264,6 +265,48 @@ export class AssociationController {
         })
       }
       return res.status(200).json(toResponseDTO(asso, 200, 'password'))
+    } catch (err) {
+      return res.status(500).json({
+        error: 500,
+        message: err
+      })
+    }
+  }
+
+  static async update(
+    req: Request<{}, {}, UpdateAssociationInput>,
+    res: Response
+  ) {
+    const connectedUser = res.locals.user
+    if (!connectedUser) {
+      return res.status(401).json({
+        error: 401,
+        message: 'You are not connected'
+      })
+    }
+
+    try {
+      const { aid } = req.body
+      if (connectedUser.id !== aid) {
+        const user = await UserService.getUserById(connectedUser.id)
+        if (!user || user.userRoleId !== 1) {
+          return res.status(401).json({
+            error: 401,
+            message: 'You do not have the rights'
+          })
+        }
+        const asso = await AssociationService.getAssociationById(aid)
+        if (!asso) {
+          return res.status(401).json({
+            error: 401,
+            message: 'Association not found'
+          })
+        }
+      }
+
+      const input = req.body
+      const result = await AssociationService.updateAssociation(input)
+      return res.status(200).json(toResponseDTO(result, 200, 'password'))
     } catch (err) {
       return res.status(500).json({
         error: 500,

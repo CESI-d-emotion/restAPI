@@ -42,5 +42,11 @@ export class RessourceRouter implements IRouter {
       requireUser,
       RessourceController.createRessource
     )
+
+    this.router.post(
+      this.path + '/update',
+      requireUser,
+      RessourceController.update
+    )
   }
 }

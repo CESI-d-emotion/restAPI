@@ -16,7 +16,11 @@ export class AssociationRouter implements IRouter {
     this.router.get(this.path, AssociationController.getAssociation)
 
     // WhoAmI asso
-    this.router.get(this.path + '/whoami', requireUser, AssociationController.whoami)
+    this.router.get(
+      this.path + '/whoami',
+      requireUser,
+      AssociationController.whoami
+    )
 
     // GET : Route pour récupérer une association par ID
     this.router.get(
@@ -42,5 +46,11 @@ export class AssociationRouter implements IRouter {
 
     // POST : Route pour se connecter en tant qu'association
     this.router.post(this.path + '/login', AssociationController.login)
+
+    this.router.post(
+      this.path + '/update',
+      requireUser,
+      AssociationController.update
+    )
   }
 }
