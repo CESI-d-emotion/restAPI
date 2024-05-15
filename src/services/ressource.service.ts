@@ -186,6 +186,26 @@ export class RessourceService {
           }
         ]
       },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true
+          }
+        },
+        typePost: true,
+        postReaction: {
+          include: {
+            users: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true
+              }
+            }
+          }
+        }
+      },
       orderBy: [
         {
           createdAt: input.sort
