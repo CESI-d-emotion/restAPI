@@ -12,12 +12,8 @@ import {
   ressourceCreateInput
 } from '../entities/ressource.entity'
 import { RessourceService } from '../services/ressource.service'
-import { associationRegisterInput } from '../entities/association.entity'
-import { encryptPassword } from '../helpers/password.helper'
 import { AssociationService } from '../services/association.service'
-import { maxAge } from '../helpers/jwt.helper'
 import { UserService } from '../services/user.service'
-import { UserController } from './user.controller'
 
 export class RessourceController {
   // Méthode pour récupérer toutes les ressources

@@ -104,10 +104,11 @@ export class UserController {
       const userId: number = parseInt(req.params.userId)
       const connectedUser = res.locals.user
 
-      const user = await UserService.getUserById(connectedUser.id)
+      const userAd = await UserService.getUserById(connectedUser.id)
+      console.log('Connected: ', userAd)
 
       //verifier que le user connecte est le user a supprimer ou admin
-      if (connectedUser.id === userId || user.userRoleId === 1) {
+      if (connectedUser.id === userId || userAd.userRoleId === 1) {
         //Verifier que le user existe
         if (userId == 0) {
           return res.status(400).json({
@@ -116,6 +117,7 @@ export class UserController {
         }
 
         const user = await UserService.getUserById(userId)
+        console.log("user ", user)
         if (!user) {
           return res.status(404).json({
             message: 'Utilisateur non trouvé'
@@ -223,7 +225,7 @@ export class UserController {
     req: Request<
       {},
       {},
-      { firstName: string; lastName: string; email: string }
+      { uid: number; firstName: string; lastName: string; email: string }
     >,
     res: Response
   ) {
@@ -233,8 +235,12 @@ export class UserController {
     }
 
     try {
-      const { firstName, lastName, email } = req.body
-      const user = await UserService.getUserById(connectedUser.id)
+      const { uid, firstName, lastName, email } = req.body
+      const adminCheck = await UserService.getUserById(connectedUser.id)
+      if ((!adminCheck && uid !== connectedUser.id) || adminCheck.userRoleId !== 1) {
+        return res.status(401).json(toResponseDTO("You do not have the rights", 401))
+      }
+      const user = await UserService.getUserById(uid)
       if (!user) {
         return res.status(404).json(toResponseDTO('User not found', 404))
       }
