@@ -46,7 +46,7 @@ CREATE TABLE `associations` (
     `name` VARCHAR(100) NOT NULL,
     `email` VARCHAR(100) NOT NULL,
     `password` VARCHAR(100) NOT NULL,
-    `description` VARCHAR(191) NULL,
+    `description` VARCHAR(3000) NULL,
     `regionId` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -58,7 +58,7 @@ CREATE TABLE `associations` (
 CREATE TABLE `post` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(191) NOT NULL,
-    `content` VARCHAR(191) NOT NULL,
+    `content` VARCHAR(3000) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `typePostId` INTEGER NOT NULL,

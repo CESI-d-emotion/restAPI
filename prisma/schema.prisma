@@ -64,7 +64,7 @@ model associations {
   name        String   @db.VarChar(100)
   email       String   @db.VarChar(100)
   password    String   @db.VarChar(100)
-  description String?
+  description String?  @db.VarChar(3000)
   region      region   @relation(fields: [regionId], references: [id])
   regionId    Int
   createdAt   DateTime @default(now())
@@ -79,7 +79,7 @@ model associations {
 model post {
   id         Int          @id @default(autoincrement())
   title      String
-  content    String
+  content    String       @db.VarChar(3000)
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   typePost   typePost     @relation(fields: [typePostId], references: [id])
