@@ -13,7 +13,7 @@ RUN prisma generate
 
 EXPOSE 8082
 
-ENV DATABASE_URL=mysql://root:root@localhost:3306/bongo
+ENV DATABASE_URL=mysql://root:root@db:3306/bongo
 ENV JWT_SECRET=ouiouilesecret
 
 CMD ["npm", "run", "start"]
