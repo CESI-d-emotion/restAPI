@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  firstName  String   @db.VarChar(50)
+  lastName   String   @db.VarChar(50)
+  email      String   @unique
+  password   String
+  region     region   @relation(fields: [regionId], references: [id])
+  regionId   Int
+  userRole   userRole @relation(fields: [userRoleId], references: [id])
+  userRoleId Int
+
+  membreAsso            membreAsso[]
+  vuesPost              vuesPost[]
+  postReaction          postReaction[]
+  postComment           Comment[]
+  userFollowAssociation userFollowAssociation[]
+}
+
+model userRole {
+  id      Int    @id @default(autoincrement())
+  libelle String @db.VarChar(50)
+
+  users users[]
+}
+
+model region {
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(50)
+  nutsCode String @db.VarChar(50)
+
+  users        users[]
+  associations associations[]
+}
+
+model membreAsso {
+  users         users        @relation(fields: [userId], references: [id])
+  userId        Int
+  associations  associations @relation(fields: [associationId], references: [id])
+  associationId Int
+
+  @@id([userId, associationId])
+}
+
+model associations {
+  id          Int      @id @default(autoincrement())
+  rna         String   @db.VarChar(100)
+  name        String   @db.VarChar(100)
+  email       String   @db.VarChar(100)
+  password    String   @db.VarChar(100)
+  description String?  @db.VarChar(3000)
+  region      region   @relation(fields: [regionId], references: [id])
+  regionId    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  membreAsso            membreAsso[]
+  post                  post[]
+  userFollowAssociation userFollowAssociation[]
+  Comment               Comment[]
+}
+
+model post {
+  id         Int          @id @default(autoincrement())
+  title      String
+  content    String       @db.VarChar(3000)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  typePost   typePost     @relation(fields: [typePostId], references: [id])
+  typePostId Int
+  author     associations @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId   Int
+
+  vuesPost     vuesPost[]
+  postReaction postReaction[]
+  postComment  Comment[]
+}
+
+model typePost {
+  id      Int    @id @default(autoincrement())
+  libelle String
+
+  post post[]
+}
+
+model vuesPost {
+  post   post     @relation(fields: [postId], references: [id])
+  postId Int
+  users  users    @relation(fields: [userId], references: [id])
+  userId Int
+  time   DateTime @default(now())
+
+  @@id([postId, userId])
+}
+
+model postReaction {
+  id     Int   @id @default(autoincrement())
+  post   post  @relation(fields: [postId], references: [id])
+  postId Int
+  users  users @relation(fields: [userId], references: [id])
+  userId Int
+}
+
+model Comment {
+  id             Int      @id @default(autoincrement())
+  content        String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  attachedToType String
+
+  user           users?        @relation(fields: [userId], references: [id])
+  userId         Int?
+  associations   associations? @relation(fields: [associationsId], references: [id])
+  associationsId Int?
+
+  post   post? @relation(fields: [postId], references: [id])
+  postId Int?
+
+  parent   Comment? @relation("ChildComments", fields: [parentId], references: [id])
+  parentId Int?
+
+  childComments Comment[] @relation("ChildComments")
+}
+
+model userFollowAssociation {
+  id            Int          @id @default(autoincrement())
+  user          users        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int
+  association   associations @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  associationId Int
+}
