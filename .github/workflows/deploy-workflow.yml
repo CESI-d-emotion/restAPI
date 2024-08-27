@@ -18,6 +18,7 @@ jobs:
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
           cat .env
+          ls -la
 
       - name: Build docker image 🐳
         run: docker build -t nathan8413/rsrbackend .

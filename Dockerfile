@@ -11,6 +11,8 @@ RUN npm install -g prisma
 
 RUN prisma generate
 
+RUN ls -la /app
+
 EXPOSE 8082
 
 # ENV DATABASE_URL=mysql://root:root@db:3306/bongo
