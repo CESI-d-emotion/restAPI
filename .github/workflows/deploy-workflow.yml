@@ -49,9 +49,6 @@ jobs:
       - name: Run tests
         run: echo "Running tests (je jure)"
         
-      - name: Push docker image to DH
-        run: docker push nathan8413/rsrbackend:latest
-
       - name: Deploy to production server
         uses: appleboy/ssh-action@master
         with:
