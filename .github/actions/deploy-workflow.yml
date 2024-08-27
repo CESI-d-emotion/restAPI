@@ -2,7 +2,7 @@ name: RSR API Deploy workflow
 run-name: ${{ github.actor }} is deploying new API version 🚀
 on:
   push:
-    branch:
+    branches:
       - main
 jobs:
   Explore-GitHub-Actions:
