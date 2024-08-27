@@ -9,11 +9,11 @@ RUN rm -rf node_modules/
 RUN npm install
 RUN npm install -g prisma
 
-RUN prisma generate
+# RUN prisma generate
 
 EXPOSE 8082
 
 # ENV DATABASE_URL=mysql://root:root@db:3306/bongo
 # ENV JWT_SECRET=ouiouilesecret
 
-CMD ["npm", "run", "start"]
+# CMD ["npm", "run", "start"]
