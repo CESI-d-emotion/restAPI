@@ -13,9 +13,11 @@ jobs:
 
       - name: Create .env file
         run: |
+          ls -la
           echo "PORT=${{ secrets.BACKPORT }}" >> .env
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          cat .env
 
       - name: Build docker image 🐳
         run: docker build -t nathan8413/rsrbackend .
