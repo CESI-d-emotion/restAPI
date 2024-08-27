@@ -41,4 +41,5 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             echo "testing deploy\n" >> loggindeploy
+            cd code/docker_stack
             sh update-container.sh
