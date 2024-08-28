@@ -47,7 +47,7 @@ jobs:
           tags: nathan8413/rsrbackend:latest
 
       - name: Run tests
-        run: echo "Running tests (je jure)"
+        run: echo "Running tests"
         
       - name: Deploy to production server
         uses: appleboy/ssh-action@master
