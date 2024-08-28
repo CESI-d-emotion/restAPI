@@ -1,0 +1,9 @@
+.git
+.github
+.gitignore
+.env.example
+.prettierrc
+README.md
+.idea
+update-images.sh
+docker-compose.yml
